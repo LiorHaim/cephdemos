@@ -1,6 +1,6 @@
 ## RHCS4.0 Bucket Notifications 
 
-This repository contains a demo for Red Hat Ceph Storage 4.0 bucket notifications feature. This feature provides the ability of getting a notifications each time an object is created/removed. The MQ endpoints can be RabbitMQ (AMQP), Kafka, and HTTP. 
+This repository contains a demo for Red Hat Ceph Storage 4.0 bucket notifications feature. This feature provides the ability of getting a notification each time an object is created/removed. The MQ endpoints can be RabbitMQ (AMQP), Kafka, and HTTP. 
 
 ### Prerequisites
 
@@ -31,8 +31,10 @@ kafka-docker_zookeeper_1   /bin/sh -c /usr/sbin/sshd  ...   Up      0.0.0.0:2181
 netstat -ntlp | egrep -e "9092|2181"
 tcp6       0      0 :::9092                 :::*                    LISTEN      13911/docker-proxy  
 tcp6       0      0 :::2181                 :::*                    LISTEN      13931/docker-proxy  
+```
 
 Lets verify RGW is listening and we can access it on the right address and port: 
+
 ```
 curl <RGW_ADDRESS>:<RGW_PORT>
 <?xml version="1.0" encoding="UTF-8"?><ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>anonymous</ID><DisplayName></DisplayName></Owner><Buckets></Buckets></ListAllMyBucketsResult>
@@ -53,6 +55,7 @@ docker exec -it kafka-docker_kafka_1 bash -c "/opt/kafka/bin/kafka-topics.sh --l
 storage
 
 docker exec -it kafka-docker_kafka_1 bash -c "/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic storage --from-beginning"
+```
 
 If you don't see any messages it's OK, we havent sent any notification yet. To configure bucket notifications, we could use a tool called notify, which handles all to REST configuration towards our ceph cluster. To do so: 
 
@@ -83,7 +86,9 @@ optional arguments:
 
 docker run shonpaz123/notify -a test-notifications -s test-notifications -b test-notifications -k <KAFKA_ADDRESS>:9092 -t storage -e <RGW_ADDRESS>:<RGW_PORT>
 ```
+
 After configuering the following, lets configure our s3 credentails and create a bucket so we could start uploading objects: 
+
 ``` 
 export AWS_SECRET_ACCESS_KEY=test-notifications
 export AWS_ACCESS_KEY_ID=test-notifications
