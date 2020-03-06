@@ -267,7 +267,7 @@ rados ls -p default.rgw.STANDARD_IA.data
 39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV0
 ```
 
-Now, lets verify objects wew deleted constantly by performing the same commands again: 
+Now, lets verify objects were deleted constantly by performing the same commands again: 
 
 ```bash 
 rados ls -p default.rgw.buckets.data | wc -l 
