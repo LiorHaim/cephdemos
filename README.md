@@ -8,6 +8,9 @@ Zone Group - a collection of zones located mainly on the same geographic locatio
 Zone - an instance contains cloud services and takes a part in a zone group, AKA Zone. 
 Placement - Logical separation of data placement within the same zone. 
 
+## Prerequisites  
+To do this demo, you should have a running Red Hat Ceph Storage 4.0 cluster. 
+
 ## Configuration 
 By default, we get default zonegroup, zone and placement, there is the ability of creating new ones, but this is out of this article's scope. 
 
@@ -42,7 +45,7 @@ radosgw-admin zonegroup get
 
 We can see we have a placement with default placement id, containing the STANDARD storage class. 
 
-Now, we'll verify which storage classes we have in the current zone configuration, we should see a 'STANDARD' storage class which is created by default. This storage class is the default storage class, which means all buckets and objects created are written to it, you could see this storage class contains it's own pools. 
+Now, we'll verify which storage classes we have in the current zone configuration, we should see a STANDARD storage class which is created by default. This storage class is the default storage class, which means all buckets and objects created are written to it, you could see this storage class contains it's own pools. 
 
 ```bash
 radosgw-admin zone get
@@ -65,7 +68,7 @@ radosgw-admin zone get
 ```
 
 Here we can see we have a data pool specifically for STANDARD storage class, let's create a new storage class containing it's own data pool.
-Data on the new storage class will be compressed with lz4 compression algorythm. We'll create a new storage class called 'STANDARD_IA':
+Data on the new storage class will be compressed with lz4 compression algorythm. We'll create a new storage class called STANDARD_IA:
 
 ```bash 
 radosgw-admin zonegroup placement add \
@@ -82,7 +85,7 @@ radosgw-admin zone placement add \
 
 ```
 
-In the output, we can see a new storage class was added, and there is a new data pool under 'STANDARD_IA' storage class: 
+In the output, we can see a new storage class was added, and there is a new data pool under STANDARD_IA storage class: 
 ```bash
 "storage_classes": {
                     "STANDARD": {
@@ -181,10 +184,9 @@ def main():
 
     # creates bucket with the specified name
     bucket_name = 'testie'
-    #s3_connection.create_bucket(Bucket=bucket_name)
-
+    
     # configures lifecycle configuration for the bucket
-    # creates a rule that deletes all wmv files after oe day
+    # creates a rule that moves all WMV objects after 1 day, and deletes them after 3 days 
     s3_connection.put_bucket_lifecycle_configuration(
         Bucket=bucket_name,
         LifecycleConfiguration=
@@ -257,13 +259,12 @@ Let's verify all objects moved to the target data pool contained by 'STANDARD_IA
 
 ```bash
 rados ls -p default.rgw.STANDARD_IA.data
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.xg_HHEfyGhd44Y4GCx8X7qcjTnKVyLi_0
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.q3HsVMwTEIzPlkYkOEUmp5aVlSmlika_0
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.9Yb9SjEUHT6_8a_j11ZZFotE30wkzxs_0
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.iSf_vc4C6TY1CnChp9s4_Oz62HIGP28_0
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.FdGM_bdWnpId6jlVCrzgu3EghHcOtIc_0
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.pEnLgGx7RM1Ng9bEgYufggJUcG2dH3Y_0
-39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1__shadow_.AdTU5Ro485PNutMdtEGSHDq4JAxOjlP_0
+39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV37
+39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV34
+39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV29
+39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV80
+39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV96
+39664c5a-2b23-4a46-85c1-5bbfeeadfece.4179.1_WMV0
 ```
 
 Now, lets verify objects wew deleted constantly by performing the same commands again: 
@@ -276,6 +277,7 @@ rados ls -p default.rgw.STANDARD_IA.data | wc -l
 0
 ``` 
 
+## Conclusion
 We have been through RHCS4.0 Tier transtion feature, as we saw this feature provides the ability of controlling our data movement according to a pre-defined policy created by the end user. This flexability could ease the data management process in our organization, offloading archiving/deletions from the end user by exposing a declerative scriptable policy-based interface. 
 
 
