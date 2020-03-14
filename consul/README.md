@@ -188,10 +188,12 @@ dig @127.0.0.1 s3.service.dc1.domain1
 ;; ANSWER SECTION:
 s3.service.dc1.domain1.	0	IN	A	192.168.42.11
 ```
-## Conclustion 
+
 As you see, we got only one of the rgw's address from consul because the other one crashed. 
 
-As we saw, we have three main abilities needed when running s3 service in our private cloud, Consul provides all of these in only one simple deployment. These abilities and the fact Consul is not a part of the data path, unlock the complications in managing our s3 service. 
+## Conclustion 
+
+As we saw, we have three main abilities needed when running s3 service in our private cloud, Consul provides all of these in only one simple deployment. These abilities and the fact Consul is not a part of the data path, help unlocking the complications in managing our s3 service. 
 
 
 
