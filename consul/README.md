@@ -96,7 +96,6 @@ Now, after you have copied the needed files to /etc/consul.d dir, we can start t
 ```bash 
 docker-compose up -d 
 
-  RequestsDependencyWarning)
        Name                     Command               State   Ports
 -------------------------------------------------------------------
 consuld_consul01_1   docker-entrypoint.sh consu ...   Up           
@@ -112,7 +111,7 @@ s3.service.dc1.domain1.	0	IN	A	192.168.42.10
 s3.service.dc1.domain1.	0	IN	A	192.168.42.11
 ``` 
 
-As you see, i have directed the dns query to localhost since Consul DNS server runs on my computer, DNS query returned the two rgw's ip addresses. Now let's check we can accesess the rgws and we get the famoud xml: 
+As you see, i have directed the dns query to localhost since Consul DNS server runs on my computer, DNS query returned the two rgw's ip addresses. Now let's check we can access the rgws and get the famous xml: 
 
 ```bash 
 curl s3.service.dc1.domain1:8080
