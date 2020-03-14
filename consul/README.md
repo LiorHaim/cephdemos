@@ -7,11 +7,11 @@ This is why I wanted to talk about Consul by Hashicorp. Consul provides load bal
 To run this demo, you should have a running Ceph cluster with at least two RGW instances. 
 
 In my environment, I have used Vagrant and deployed the following: 
-1 OSD server 
-2 Mon/Mgr/RGW (collocated management plain) 
+* 1 OSD server 
+* 2 Mon/Mgr/RGW (collocated management plain) 
 
 And my Consul server is located on my workstation, acessing both rgw servers with Virtualbox bridged network. 
-1 Consul server (my workstation) 
+* 1 Consul server (my workstation) 
 
 Let's pull the consul docker image to run the consul server, to do so: 
 ```bash 
