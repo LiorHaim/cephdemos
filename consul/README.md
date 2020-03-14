@@ -24,11 +24,13 @@ A short brief about Consul's objectives:
 We will deploy consul server with docker-compose, we'll have one consul server, a real production deployment should contain at least 3 servers for high availability. to those servers, you could configure DNS HA from you organization domain controller in case one of them gets unresponsive. 
 
 Let's create a directory for consul's config files: 
+
 ```bash 
 mkdir /etc/consul.d
 ``` 
 
 Let's take a look on the config.json file:  
+
 ```bash 
 {
   "datacenter": "dc1",
@@ -51,6 +53,7 @@ Let's take a look on the config.json file:
 }
 ``` 
 The service definition file (This is for one server, to load balance create another one and change the id, ip and port): 
+
 ```bash 
 {
   "service": {
@@ -69,6 +72,7 @@ The service definition file (This is for one server, to load balance create anot
 
 
 And the docker-compose file: 
+
 ```bash
 version: '2'
 services:
@@ -86,6 +90,7 @@ services:
 ``` 
 
 Now, after you have copied the needed files to /etc/consul.d dir, we can start the Consul server: 
+
 ```bash 
 docker-compose up -d 
 
@@ -96,7 +101,8 @@ consuld_consul01_1   docker-entrypoint.sh consu ...   Up
 ``` 
 
 Now, Let's test out dns resolving by using the dig command, output should be as the following: 
-``bash 
+
+```bash 
 dig @127.0.0.1 s3.service.dc1.domain1
 
 ;; ANSWER SECTION:
@@ -111,7 +117,8 @@ curl s3.service.dc1.domain1:8080
 
 <?xml version="1.0" encoding="UTF-8"?><ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>anonymous</ID><DisplayName></DisplayName></Owner><Buckets></Buckets></ListAllMyBucketsResult>
 ```
-Great, now let's configure awscli to access this single url and see if we can upload objects (radosgw user was pre-created): 
+Great, now let's configure awscli to access this single url and see if we can upload objects (radosgw user was pre-created):
+
 ```bash 
 export AWS_ACCESS_KEY_ID=**********
 export AWS_SECRET_ACCESS_KEY=*********************
@@ -119,6 +126,7 @@ aws s3 mb s3://test --endpoint-url http://s3.service.dc1.domain1:8080
 make_bucket: test
 ``` 
 So we have managed to create a bucket, now let's upload few objects to our rgws: 
+
 ```bash 
 for i in {1..10};do aws s3 cp /etc/hosts s3://test/$i --endpoint-url http://s3.service.dc1.domain1:8080;done
 upload: ../../../etc/hosts to s3://test/1                          
@@ -137,6 +145,8 @@ So we have tested load balancing, and DNS resolving. Now let's test Consul's ser
 
 ```bash 
 systemctl stop ceph-radosgw@rgw.rgw0.service 
+
+
 for i in {1..30};do aws s3 cp /etc/hosts s3://test/$i --endpoint-url http://s3.service.dc1.domain1:8080;done
 upload: ../../../etc/hosts to s3://test/1                          
 upload: ../../../etc/hosts to s3://test/2                         
@@ -170,13 +180,14 @@ upload: ../../../etc/hosts to s3://test/29
 upload: ../../../etc/hosts to s3://test/30  
 ``` 
 As you see, upload process has fully completed, which means stopping one of the rgws didn't disrupt real time uploading. To verify: 
+
 ```bash 
 dig @127.0.0.1 s3.service.dc1.domain1
 
 ;; ANSWER SECTION:
 s3.service.dc1.domain1.	0	IN	A	192.168.42.11
 ```
-
+## Conclustion 
 As you see, we got only one of the rgw's address from consul because the other one crashed. 
 
 As we saw, we have three main abilities needed when running s3 service in our private cloud, Consul provides all of these in only one simple deployment. These abilities and the fact Consul is not a part of the data path, unlock the complications in managing our s3 service. 
