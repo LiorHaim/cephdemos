@@ -1,16 +1,17 @@
 ## Creating the intelligent object storage system with Ceph's Object Lifecycle Management 
 
-In the previous chapters we ave talked about RHCS4.0 tier transition feature. This feature is one of two abiliies we have in Object Lifecycle Management, where the second one is used for object exipration. 
-As in Amazon, we can use a declerative policy to expire the objects we have in the cluster, we have few possibilities when it comes to expiration:
+In the previous chapters we have talked about RHCS4.0 tier transition feature. This feature is one of two abiliies we have in Object Lifecycle Management, where the second one is used for object exipration. 
+As in Amazon, we can use a declarative policy to expire the objects we have in our cluster. We have few possibilities when it comes to expiration:
 
 1. Expiring objects with no dedicated rule, all object are deleted after a certain amount of time.
-2. Expiring objects with one or more rules by tagging the object with custom metadata, which will be used in the expiration policy.
-3. Expiring objects with one or more rules by indicating a prefix, all objects will expire recursivly under that prefix. 
+2. Expiring objects with one or more rules by tagging the objects with custom metadata, which will be used in the expiration policy.
+3. Expiring objects with one or more rules by indicating a prefix, and all objects will expire recursivly under that prefix. 
 
-In ceph, lc (AKA Lifecycle) scans the objects for their metadata, checking if there are any objects to delete. Every object holds it's expiration date, and lc just compares the expiration date with the current date. lc process runs periodically with a pre-defined and configurable schedule, every object lc marks as deleted, is then transferred to Ceph's garbage collector that deletes the expired objects.
+In ceph, lc (AKA Lifecycle) scans the objects for their metadata, checking if there are any objects to delete. Every object holds it's expiration date, and lc just compares the expiration date with the current date. lc process runs periodically with a pre-defined and configurable schedule, every object lc marks as deleted is then transferred to Ceph's garbage collector (AKA gc) which deletes the expired objects.
 
 In this demo we will test only one the previous mentioned expiration methods (expiration with tags) to get a clue of how things work. 
 
+## Prerequisites
 To run this demo, you should have a running Ceph cluster (minimum version of luminous) and tools such as boto3 python library and awscli installed. 
 
 Let's use the following python script, to emphasize the upload of 20 flower images (could be pre-recognized by machine learning image recogniztion algorythm for example), where 10 images contain red flowers, and the other ten contain blue flowers. The bucket name is `flowers`, and we will configure a bucket lifecycle policy that deletes all red flowers after 1 week, and all the blue flowers after 1 month. In our demo we will be using `rgw lc debug interval = 10` in the ceph.conf so every day will be counted as 10 seconds (don't forget to restart the rgw service to inject the configuration).
@@ -118,6 +119,8 @@ def main():
                                             Key=object_key,
                                             Tagging={'TagSet': [{'Key': 'color', 'Value': 'red'}]}
                                         )
+        print("object: {0} uploaded".format(object_key))
+        
     # uploads 10 objects and tag them in the needed tags for expiration
     for i in range(10):
         object_key = 'blueflower' + str(i) + '.jpg'
@@ -187,7 +190,7 @@ aws s3api head-object --bucket flowers --key redflower0.jpg --endpoint-url http:
 
 ```
 
-So we have queries the object's metadata and as you see, a red flower will be deleted in a week (23/03/20), and a blue flower will be deleted in one month (15/04/21). Let's verify radosgw got our bucket configuration: 
+So we have queried the object's metadata and as you see, a red flower will be deleted in a week (23/03/20), and a blue flower will be deleted in one month (15/04/21). Let's verify radosgw got our bucket configuration: 
 
 ```bash
 radosgw-admin lc list
@@ -227,7 +230,7 @@ ce45d8ff-b551-46aa-868b-cf6e50ef021a.14103.1_blueflower8.jpg
 ce45d8ff-b551-46aa-868b-cf6e50ef021a.14103.1_blueflower4.jpg
 ```
 
-After 5 minutes, we can see that if we do the same command we can see we have no objects in the pool which means all objects are deleted: 
+Objects indeed wer deleted. After 5 minutes, we can see that if we do the same command we can see we have no objects in the pool which means all objects were deleted: 
 
 ```bash 
 rados ls -p default.rgw.buckets.data | wc -l
@@ -236,7 +239,7 @@ rados ls -p default.rgw.buckets.data | wc -l
 
 ## Conclusion 
 
-As we saw, we have multiple policies for expiring objects when it comes to Object Lifecycle Management. With this feature, we can provide an intelligent object storage system, which eventually can offload the expiration management from the developers, and can be managed as declarative self-service policy in our private cloud environment. 
+As we saw, we have multiple policies for expiring objects when it comes to Object Lifecycle Management. With this feature, we can provide an intelligent object storage system, which can ventually offload the objets expiration management from the developers, and can be managed as declarative self-service policy in our private cloud environment. 
 
 
 
