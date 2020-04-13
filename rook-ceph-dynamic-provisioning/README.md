@@ -1,6 +1,6 @@
 ## Use rook-ceph to create Dynamic Provisioned PVCs using Openshift 
 
-As we all know, Kubernetes offers the ability of running multiple workloads in an available, durable and consistent manner. These workloads are defined as loosly-coupled microservices, which are one or more containers gathered into one single entity called a "Pod". This Pod can act as Stateful or Stateless application, which mainly tell if the Pod needs it's data to be saved or not. In a Stateless approach, handeling failure is quite easy - the Pod is created from a container image and has no state to preserve, so it could be easily re-deployed. The challenge occures when the data beneath the Pod needs to be saved in order for the application to function (for example, database, message broker, storage system etc). This is why Kubernetes offers Persistent Volumes, which will will save the container's data in case the container runtime fails. These PVs are backed up by Persistent Volume Claims that will claim the amount of storage resources the Pod needs. Those PVs will intergrate with various cloud providers and storage systems in order to fulfill the PVC request. PVCs can be accessed via RWO (block storage, for io intensive workloads) or RWX (file storage, for CI/CD, web servers) where in RWX the volume can be shared across a few containers in a Pod (or even a few different pods) and RWO is dedicated to a single Pod. Kuberenetes offers the ability of creating an object called "Storage Class" refers to the created storage system and access type. PVs are attached from the created storage class and mounted into the the pod that has claimed for the storage capacity. In that way, storage capacity can be Dynamically provisioned out of the created storage class. In this publication we will see how we can use rook-ceph to create a Block and a File storage classes, claim PVCs and attach the created PVs into pods. 
+As we all know, Kubernetes offers the ability of running multiple workloads in an available, durable and consistent manner. These workloads are defined as loosly-coupled microservices, which are one or more containers gathered into one single entity called a **Pod**. This Pod can act as Stateful or Stateless application, which will mainly tell if the Pod needs it's data to be saved or not. In a Stateless approach, handeling failures is quite easy - the Pod is created from a container image and has no state to preserve, so it could be easily re-deployed. The challenge occures when the data beneath the Pod needs to be saved in order for the application to function properly (for example, database, message broker, storage system etc). This is why Kubernetes offers Persistent Volumes, which will save the container's data in case the container's runtime fails. These PVs are backed up by Persistent Volume Claims that will claim the amount of storage resources the Pod needs. Those PVs will intergrate with various cloud providers and storage systems in order to fulfill the PVC request. PVCs can be accessed via RWO (block storage, for io intensive workloads) or RWX (file storage, for CI/CD, web servers) where in RWX the volume can be shared across a few containers in a Pod (or even a few different pods) and RWO is dedicated to a single Pod. Kuberenetes offers the ability of creating an object called **Storage Class** refers to the created storage system and access type. PVs are attached from the created storage class and mounted into the the pod that has claimed for the storage capacity. In that way, storage capacity can be dynamically provisioned out of the created storage class. In this demo we will see how we can use rook-ceph in order to create Block and File storage classes, claim PVCs and attach the created PVs into pods. 
 
 # Prerequisites 
 * A running Openshift cluster (version 4.3.8) 
@@ -54,9 +54,9 @@ EOF
 ```
 
 So we see we have to CRDs being created, where the first one is from type CephBlockPool which will immediately create an rbd pool in our Ceph cluster. This pool will have 3 replicas in a host failure domains. in our case is will store data across 3 OSD pods. 
-The second CRD that is being defined is the Storage Class, which refers to the CephBlockPool we have created in the previous CRD. This storage class will create an ext4 volumes, allow expantion of volumes and will reclaim the space in case an attached PV will be deleted. 
+The second resource that is being defined is the Storage Class, which refers to the CephBlockPool we have created in the previous CRD. This storage class will create an ext4 volumes, allow expantion of volumes and will reclaim the space in case an attached PV will be deleted. 
 
-Now let's create those CRDs and veirfy all is set up as expected, first we'll verify the CephBlockPool creation:
+Now let's create those resources and veirfy all is set up as expected, first we'll verify the CephBlockPool creation:
 ```bash 
 oc get cephblockpool
 
@@ -72,7 +72,7 @@ NAME              PROVISIONER                  AGE
 rook-ceph-block   rook-ceph.rbd.csi.ceph.com   42s
 ```
 
-After we have both CRDs set up, let's create a PVC that will be taken from the created storage class: 
+After we have both resources set up, let's create a PVC that will be allocated from the created storage class: 
 ```bash 
 oc create -f - <<EOF
 ---
@@ -90,7 +90,7 @@ spec:
 EOF
 ```
 
-As you see we will create a PVC called rbd-pvc that will claim for a 1GB volume out of our CephBlockPool, let's create it and verify it's in bound state: 
+As you see we will create a PVC called rbd-pvc that will claim a 1GB volume out of our CephBlockPool, let's create it and verify it's in bound state: 
 ```bash
 oc get pvc
 
@@ -121,8 +121,7 @@ spec:
        readOnly: false
 EOF
 ```
-
-The pod will be called as csirbd-demo-pod and will use the rbd-pvc created as a volume that will be mounted into /var/lib/www/html path on the container. 
+The pod will be called as csirbd-demo-pod and will use the rbd-pvc created as a volume that will be mounted into /var/lib/www/html path in the container. 
 Now let's verify the pod actually mounted the created PV:
 
 ```bash
@@ -141,15 +140,13 @@ Blocks: Total: 249830     Free: 249189     Available: 245093
 Inodes: Total: 65536      Free: 65525
 
 ```
-
 As you see, we have the PV in size 1GB mounted into the wanted directory, which uses ans ext filesystem. 
 
 Now let's move on to the file storage part, change the directory to the right directory:
 ```bash 
 cd ../cephfs
 ```
-
-In this directory as before, we have the storage class definition located in storageclass.yaml file:
+In this directory, as before we have the storage class definition located in storageclass.yaml file:
 ```bash 
 oc create -f - <<EOF
 apiVersion: ceph.rook.io/v1
@@ -196,9 +193,8 @@ allowVolumeExpansion: true
 mountOptions:
 EOF
 ```
-
-In here also, we have a CephFilesystem CRD that will be deployed with myfs name, that will create a metadata and data pools in our created Ceph cluster. Those pools will be created as before, in replica factor of 3 in a host failure domain. In addition, the deployment will provision 1 MDS server that will handle the file lookups, 
-The deployments also contains the StorageClass definition itself which refers to our created CephFilesystem pools. 
+Here also, we have a CephFilesystem CRD that will be deployed with myfs name, that will create a metadata and data pools in our created Ceph cluster. Those pools will be created as before, in replica factor of 3 in a host failure domain. In addition, the deployment will provision 1 MDS server that will handle the file lookups.
+The deployments also contains the StorageClass definition itself which points to our created CephFilesystem pools. 
 
 Now let's verify we have our pools created in the Ceph cluster **you could create a toolboox with oc create -f toolbox.yaml command**:
 ```bash 
@@ -224,14 +220,14 @@ myfs - 0 clients
 +-------------+
 +-------------+
 
-# Check the filesystem out of ocp cluster
+# Check the filesystem status with oc command
 oc get cephfilesystem
 
 NAME   ACTIVEMDS   AGE
 myfs   1           114s
 
 ```
-Now we see we have our pools and our CephFilesystem in active state, now Let's verify the storage class end up right: 
+Now we see we have our pools and our CephFilesystem in an active state, now Let's verify that the storage class defintion ended up right: 
 ```bash 
 oc get sc 
 
@@ -240,7 +236,7 @@ csi-cephfs        rook-ceph.cephfs.csi.ceph.com   2m11s
 rook-ceph-block   rook-ceph.rbd.csi.ceph.com      7m18s
 ```
 
-We see we have another storage class that has been created, now let's verify the pvc.yaml defintion: 
+We see we have another that storage class is created, now let's verify the pvc.yaml defintion: 
 ```bash 
 oc create -f - <<EOF 
 ---
@@ -257,8 +253,7 @@ spec:
   storageClassName: csi-cephfs
 EOF
 ```
-
-As in the block deployment, we have a PVC called cephfs-pvc in access mode RWO that requests for 1GB from out cephfs pools, let's create it and verify it's in bound state: 
+As in the block deployment, we have a PVC called cephfs-pvc in access mode RWW that requests for 1GB from out cephfs pools, let's create it and verify it's in bound state: 
 ```bash 
 oc get pvc
 
@@ -266,9 +261,7 @@ NAME         STATUS   VOLUME                                     CAPACITY   ACCE
 cephfs-pvc   Bound    pvc-2af9d295-27f5-4b54-8054-e658fa8b7303   1Gi        RWX            csi-cephfs        4s
 rbd-pvc      Bound    pvc-22621777-c30c-43eb-b3e3-501a0b68ef8f   1Gi        RWO            rook-ceph-block   7m31s
 ```
-
-After we have all set up, let's create two pods that will share the PV created and mount it to the same mount path in the container:
-
+After we have all set up, let's create two pods that will share the PV and mount it to the same mount path in each container:
 ```bash 
 oc create -f - <<EOF 
 ---
@@ -324,11 +317,10 @@ oc rsh csicephfs-demo-pod-b ls -l /var/lib/www/html
 total 0
 -rw-r--r-- 1 root root 0 Apr 13 21:50 test
 ```
-
 As you see, we have both pods sharing the same 1GB size volume which came from our file storage class. 
 
 # Conclustion 
 
-We saw that creating storage classes out of out rook-ceph cluster is quite easy and doesn't require any extra configuration except creating few CRDs. This approach eases the process of storage consumption in Stateful applications, providing us the ability of consuming dynamic data across multiple pods and namespaces. Hope you have enjoyed the demo, have fun :)
+We saw that creating storage classes out of out rook-ceph cluster is quite easy and doesn't require any extra configuration except from creating few CRDs. This approach eases the process of storage consumption in Stateful applications, providing us the ability of consuming dynamic data across multiple pods and namespaces. Hope you have enjoyed the demo, have fun :)
 
 
