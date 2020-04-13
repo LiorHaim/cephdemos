@@ -67,6 +67,7 @@ replicapool   16s
 Now let's veirfy the storage class has been succesfully created: 
 ```bash 
 oc get sc
+
 NAME              PROVISIONER                  AGE
 rook-ceph-block   rook-ceph.rbd.csi.ceph.com   42s
 ```
@@ -91,7 +92,7 @@ EOF
 
 As you see we will create a PVC called rbd-pvc that will claim for a 1GB volume out of our CephBlockPool, let's create it and verify it's in bound state: 
 ```bash
-oc get pvc 
+oc get pvc
 
 NAME      STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
 rbd-pvc   Bound    pvc-22621777-c30c-43eb-b3e3-501a0b68ef8f   1Gi        RWO            rook-ceph-block   4s
@@ -125,10 +126,12 @@ The pod will be called as csirbd-demo-pod and will use the rbd-pvc created as a 
 Now let's verify the pod actually mounted the created PV:
 
 ```bash
+# Verify pod has mounted the correct mount path 
 oc rsh csirbd-demo-pod lsblk -l | grep rbd0
 
 rbd0                     251:0    0    1G  0 disk /var/lib/www/html
 
+# Verify the filesystem is ext as excpected 
 oc rsh csirbd-demo-pod stat -f /var/lib/www/html
 
   File: "/var/lib/www/html"
@@ -197,9 +200,10 @@ EOF
 In here also, we have a CephFilesystem CRD that will be deployed with myfs name, that will create a metadata and data pools in our created Ceph cluster. Those pools will be created as before, in replica factor of 3 in a host failure domain. In addition, the deployment will provision 1 MDS server that will handle the file lookups, 
 The deployments also contains the StorageClass definition itself which refers to our created CephFilesystem pools. 
 
-Now let's verify we have our pools created in the Ceph cluster:
+Now let's verify we have our pools created in the Ceph cluster **you could create a toolboox with oc create -f toolbox.yaml command**:
 ```bash 
-oc rsh <tools pod> ceph fs status 
+# use the created toolbox pod to verify cephfilesystem status
+oc rsh <tools-...> ceph fs status
 
 myfs - 0 clients
 ====
@@ -220,7 +224,7 @@ myfs - 0 clients
 +-------------+
 +-------------+
 
-
+# Check the filesystem out of ocp cluster
 oc get cephfilesystem
 
 NAME   ACTIVEMDS   AGE
