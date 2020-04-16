@@ -319,7 +319,7 @@ total 0
 ```
 As you see, we have both pods sharing the same 1GB size volume which came from our file storage class. 
 
-* Point Openshift's image registry to Cephfs storage class 
+# Point Openshift's image registry to Cephfs storage class 
 
 After we saw that we can mount a shared filesystem coming from our Ceph cluster using the Cephfs gateway, let's get some more real world scenario and point the image registry to consume a pv from out cephfs storage class. 
 
@@ -327,6 +327,7 @@ After we have created the storage class in the previous steps, let's verify agai
 
 ```bash 
 oc get sc 
+
 NAME              PROVISIONER                     AGE
 csi-cephfs        rook-ceph.cephfs.csi.ceph.com   2m11s
 rook-ceph-block   rook-ceph.rbd.csi.ceph.com      7m18s
@@ -354,6 +355,7 @@ Now let's verify the PVC  is in bounded state:
 
 ```bash 
 oc get pvc 
+
 NAME                    STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 image-registry-cephfs   Bound    pvc-dd8f6e5c-0a98-4381-811a-3f5a32afe49b   100Gi      RWX            csi-cephfs     3m
 ```
@@ -397,6 +399,7 @@ Now let's rsh to that image-registry pod and verify the mounting process was suc
 oc exec -it image-registry-68ddd8b7f8-qt8f2 bash -n openshift-image-registry
 
 df -h  | grep registry
+
 172.30.12.70:6789,172.30.129.33:6789,172.30.228.103:6789:/volumes/csi/csi-vol-993a22c9-7fb7-11ea-bb6e-0a580a830406/58a8a05d-da53-4327-8ba1-76a34d422e99  100G     0  100G   0% /registry
 ```
 
