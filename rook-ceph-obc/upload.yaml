@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: upload
+spec:
+  parallelism: 1
+  template:
+    metadata: 
+      name: metadata
+    spec: 
+      containers:
+        - image: shonpaz123/simple-upload:latest
+          imagePullPolicy: IfNotPresent 
+          name: upload
+          envFrom: 
+          - configMapRef: 
+              name: ceph-delete-bucket
+          - secretRef:
+              name: ceph-delete-bucket 
+      restartPolicy: Never
