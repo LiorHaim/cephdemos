@@ -1,12 +1,12 @@
-## Ease your S3 based app development using Object Bucket Claims
+# Ease your S3 based app development using Object Bucket Claims
 
-We live in a world were S3 based application has become very popular due to the fact S3 is a simple way of dealing the application's data layer. In the early days, developers had to deal with a filesystem (whether it's Block or File storage) to maintain the application's file location, in addition having a file system can usually cause a bottleneck (due to large number of inodes, and the fact the the filesystem's metadata structure is based on binary trees). Having S3 provides us the ability of treating files as objects without worrying about the file location, objects can be written to an HTTP endpoint using ordinary CRUD operations (such as PUT,GET,DELETE,POST). S3 by it's nature, supports high loads and massive scale by using highly distributed storage backends (Ceph for example), but there is a disatvantage in S3 mainly when dealing with cloud-native applications based on Kubernetes - the needed configuration for the application to interact with the S3 object storage requires extra work. When an application interacts with S3 object storage system, it needs the endpoint url, the bucket name and the user's credentials which doesn't integrate with Kubernetes's objectives, so if we can consume File and Block storage using PVCs which are Kubernetes objectives, why can't we treat object storage the same way? This is why i wanted to talk about Object Bucket Claims. This feature is part of the rook-ceph orchestrator, and provides us the ability of creating Object Storage Classes. It means that using a CRD, a developer will be able to claim for a bucket on demand, which will eventually create the needed configuration, those values will be taken from the object storage provider (Ceph, AWS etc) and will be stored as Kubernetes ConfigMaps and Secrets the will be injected to the running application as environment variable. So let's see how easy it can be interacting with our object storage using Object Bucket Claims. 
+We live in a world were S3 based application has become very popular due to the fact S3 is a simple way of dealing with the application's data layer. In the early days, developers had to deal with a filesystem (whether it's Block or File storage) to maintain the application's file location. Having a filesystem can usually cause a bottlenecks (due to the large number of inodes, and the fact the the filesystem's metadata structure is based on binary trees). Having S3 provides us the ability of treating files as objects without worrying about file location, objects can be written to an HTTP endpoint using ordinary CRUD operations (such as PUT,GET,DELETE,POST). S3 by it's nature, supports high loads and massive scale by using highly distributed storage backends (Ceph for example), but there is a disatvantage in S3 mainly when dealing with cloud-native applications based on Kubernetes - the needed configuration for the application to interact with the S3 object storage requires extra work. When an application interacts with S3 object storage system, it needs the endpoint url, the bucket name and the user's credentials which doesn't integrate with Kubernetes's objectives by default, so if we can consume File and Block storage using PVCs which are Kubernetes objectives, why can't we treat object storage in the same way? This is why i wanted to talk about Object Bucket Claims. This feature is part of the rook-ceph orchestrator, and provides us the ability of creating Object Storage Classes. It means that using a CRD, a developer will be able to claim for a bucket on demand, which will eventually create the needed configuration, those values will be taken from the object storage provider (Ceph, AWS etc) and will be stored as Kubernetes ConfigMaps and Secrets that will be injected into the running application as environment variables. Let's see how easy it can be to interact with an object storage service using Object Bucket Claims. 
 
-# Prerequisites 
+## Prerequisites 
 * A running Openshift cluster (version 4.3 minimum) 
 * A running rook-ceph cluster (rook: release 1.2, ceph image: 14.2.8)
 
-So we'll start by creating the S3 object storage using the `CephObjectStore` CRD, please create it with the following command: 
+We'll start by creating the S3 object storage using the `CephObjectStore` CRD, please create it with the following command: 
 ```bash 
 cat <<EOF | oc create -f -
 apiVersion: ceph.rook.io/v1
@@ -31,7 +31,7 @@ EOF
 ```
 
 This CRD will create an S3 object storage service to our running rook-ceph cluster. The metadata and data pools will have 3 replicas, where the frontend API server will be listening in port 8000. 
-Now let's verify that the created S3 service works properly, first we'll expose the service then curl to get the XML response: 
+Now let's verify that the created S3 service works properly, first we'll expose the service and then curl to get the XML response: 
 
 ```bash 
 oc get svc | grep rgw
@@ -46,7 +46,7 @@ Forwarding from 127.0.0.1:8000 -> 8000
 curl 127.0.0.1:8000                                                        
 <?xml version="1.0" encoding="UTF-8"?><ListAllMyBucketsResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Owner><ID>anonymous</ID><DisplayName></DisplayName></Owner><Buckets></Buckets></ListAllMyBucketsResult>
 ```
-Now after we have verified out S3 service works as expected, let's create an Object Storage Class that will allow us to start claiming for buckets from our rook-ceph cluster:
+Now after we have verified our S3 service works as expected, let's create an Object Storage Class that will allow us to start claiming for buckets out of our rook-ceph cluster:
 
 ```bash 
 cat <<EOF | oc create -f -
@@ -88,7 +88,7 @@ Status:
   Phase:  bound
 ``` 
 
-We see that the OBC is in bound state, which means the bucket was succesfully created in our running rook-ceph cluster. Now let's take a look at the ConfigMap that was created: 
+We see that the OBC is indeed in bound state, which means that the bucket was succesfully created in our running rook-ceph cluster. Now let's take a look at the created ConfigMap: 
 
 ```bash 
 oc describe cm ceph-delete-bucket        
@@ -121,7 +121,7 @@ BUCKET_SUBREGION:
 Events:  <none>
 ```
 
-We see that `ceph-delete-bucket` ConfigMap was created, containing the proper configuration for our application to interact with our S3 service. The only thing that is missing is our credentials, which are stored in a Secret, let's verify that: 
+We see that `ceph-delete-bucket` ConfigMap was created, containing the proper configuration for our application to interact with our S3 service. we have our credentials missing, which are stored in a Secret, let's verify that also: 
 
 ```bash 
 oc describe secret ceph-delete-bucket                                  
@@ -167,7 +167,7 @@ spec:
 EOF 
 ```
 
-This pod reacts as a Job, uploads one object into the created OBC storage class, as you see we have taken the env environments from the created Secret and ConfigMap. Let's verify the object was indeed uploaded by checking if the job has reached a complete state: 
+This pod acts as a Job, uploads one object into the created OBC storage class, as you see we have taken the env environments from the created Secret and ConfigMap. Let's verify the object was indeed uploaded by checking if the job has reached a complete state: 
 
 ```bash 
 oc get pods | grep upload 
@@ -175,7 +175,7 @@ oc get pods | grep upload
 upload-cw7p7                                                   0/1     Completed   0          3m35s
 ```
 
-So the Job has completed, let's interact with the toolbox the see if indeed the object was uploaded via radosgw-admin command-line: 
+So the Job has completed, let's interact with the toolbox to see if indeed the object was uploaded via radosgw-admin command-line: 
 
 ```bash 
 oc rsh rook-ceph-tools-...
@@ -211,7 +211,7 @@ radosgw-admin bucket list --bucket ceph-bkt-93639f54-0a63-4e75-8c79-0b61c822b895
     }
 ]
 ``` 
-We see that indeed we have and object created with the wanted prefix, and the hosts file was successfuly uploaded to the created OBC. Now, after we have chosen the Delete reclaim policy, the bucket should be deleted with all his objects after deleting the OBC: 
+We see that  we have our bucket created with the wanted prefix, and a hosts file that was successfuly uploaded to the created OBC. Now, after we have chosen the Delete reclaim policy, the bucket should be deleted with all his objects after deleting the OBC: 
 
 ```bash 
 cat <<EOF | oc delete -f -
@@ -234,7 +234,7 @@ radosgw-admin bucket list
 []
 ```
 
-We see now we have no buckets at all in our rook-ceph cluster. Now let's delete the storage class and create a new one and an OBC for a retain reclaim policy, which menas that when a user will delete the OBC, the bucket will not be deleted as outcome providing the ability of another user to re-use this bucket in his application: 
+We see now we have no buckets at all in our rook-ceph cluster. Now let's delete the storage class and recreate it with an OBC for the retain reclaim policy, which menas that when the user will delete the OBC, the bucket will not be deleted in reponse providing the ability of another user to re-use this bucket through application: 
 
 ```bash 
 cat <<EOF | oc delete -f -
@@ -283,7 +283,7 @@ spec:
 EOF
 ```
 
-We have now a bounded OBC, lets recreate the job with the same ConfigMap and Secret references: 
+We have now a bounded OBC, lets recreate the job ( notice that the ConfigMap and Secret references contain `retain` and no `delete`): 
 
 ```bash 
 cat <<EOF | oc create -f -
@@ -311,12 +311,12 @@ spec:
 EOF 
 ```
 
-Now after the Job has completed, delete the OBC so that we can re-use the existing bucket with other job: 
+Now after the Job has been completed, delete the OBC so that we can re-use the existing bucket with onother job: 
 
 ```bash 
 oc delete obc ceph-retain-bucket
 ```
-Now rsh to the tooles pod again and gather the created timestamp of the uploaded object: 
+Now rsh to the tools pod again and gather the created timestamp of the uploaded object: 
 
 ```bash 
 oc rsh rook-ceph-tools-...
@@ -378,5 +378,6 @@ As you see the second upload contains a different creation time, which menas the
 
 ## Conclusion
 
-We saw that we can achieve great flexibility when using OBC feature, this ability will help to ease the development process and will allow Devops/Developers to interact with the data layer abstractly without having to maintain the knowledge about it. 
+We saw that we can achieve great flexibility when using OBC feature, this ability will help to ease the development process and will allow DevOps/Developers to interact with the data layer abstractly without having to maintain the extra knowledge.
+
 Thank you very much, hope you have enjoyed this demo, have fun :)
