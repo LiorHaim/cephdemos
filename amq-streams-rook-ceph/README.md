@@ -29,7 +29,8 @@ amq-streams-cluster-operator-v1.4.0-f6d65d8b5-hqmrp   1/1     Running   1       
 Now that we have our operator running, let's verify we have our RBD storage class is up and running, in this demo we will use PVCs taken from RBD to persist the data that is written to the Kafka commit log in each node: 
 
 ```bash 
-oc get sc                                                                                                                                            1681  11:05:10  
+oc get sc                                                                                                                     
+
 NAME                        PROVISIONER                  AGE
 rook-ceph-block (default)   rook-ceph.rbd.csi.ceph.com   43h
 ```
@@ -347,7 +348,7 @@ NAME                                   READY   STATUS    RESTARTS   AGE     IP  
 hello-world-consumer-8f9cd7dfd-59xnd   1/1     Running   0          6m18s   10.128.0.77   crc-45nsk-master-0   <none>           <none>
 ```
 
-``bash 
+```bash 
 oc logs hello-world-consumer-8f9cd7dfd-59xnd 
 
 2020-04-21 09:12:59 INFO  KafkaConsumerExample:24 - Received message:
