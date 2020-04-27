@@ -29,7 +29,8 @@ amq-streams-cluster-operator-v1.4.0-f6d65d8b5-hqmrp   1/1     Running   1       
 Now that we have our operator running, let's verify we have our RBD storage class is up and running, in this demo we will use PVCs taken from RBD to persist the data that is written to the Kafka commit log in each node: 
 
 ```bash 
-oc get sc                                                                                                                                            1681  11:05:10  
+oc get sc                                                                                                                     
+
 NAME                        PROVISIONER                  AGE
 rook-ceph-block (default)   rook-ceph.rbd.csi.ceph.com   43h
 ```
@@ -85,7 +86,7 @@ spec:
 EOF
 ```
 
-So as you see we have our Kafka cluster CRD, which will create 3 replicas for both Zookeeper and Kafka, data will also be replicate 3 times across the Kafka cluster nodes, and will be saved on a PV created by the CRD to satisfy that Kafka commit log on each Kafka node. Those PVs will be created automatically in the RBD storage class as this is the default one. 
+So as you see we have our Kafka cluster CRD, which will create 3 replicas for both Zookeeper and Kafka, data will also be replicate 3 times across the Kafka cluster nodes, where each created PV is backing up the Kafka commit log for every Kafka node. Those PVs will be created automatically in the RBD storage class as this is the default one. 
 
 Now let's veirfy those pods are actually running: 
 
@@ -246,7 +247,7 @@ oc logs hello-world-consumer-8f9cd7dfd-lc7p4
 2020-04-21 08:48:14 INFO  KafkaConsumerExample:26 - 	offset: 0
 2020-04-21 08:48:14 INFO  KafkaConsumerExample:27 - 	value: Hello world - 5
 ```
-We see that the messages the producer sends are processed by the consumer, now lets verify all partitions are evenly distributed and we have no lags between the producer and the consumer: 
+We see that the messages the producer sends are processed by the consumer, now let's verify that all partitions are evenly distributed and we have no lags between the producer and the consumer: 
 
 ```bash 
 oc rsh kafka-cluster-kafka-0 bin/kafka-consumer-groups.sh --bootstrap-server kafka-cluster-kafka-bootstrap:9092 --describe --group my-hello-world-consumer
@@ -292,7 +293,7 @@ my-hello-world-consumer my-topic        8          72              76           
 my-hello-world-consumer my-topic        9          72              76              4               -               -               -
 ```
 
-As you see, we have no CLIENT-ID and the LAG value rises (LAG is the differencial between the CURRENT-OFFSET and the LOG-END-OFFSET). Now let's scale te deployment into 3 consumers in the consumer group and see how the partitions evenly distribute themselves. First let's reset the topic offset to 0, so that all the messages will be re-processed:
+As you see, we have no CLIENT-ID and the LAG value increases (LAG is the differencial between the CURRENT-OFFSET and the LOG-END-OFFSET). Now let's scale te deployment into 3 consumers in the consumer group and see if the partitions will evenly distribute among consumers. First let's reset the topic offset to 0, so that all the messages will be re-processed:
 
 ```bash 
 oc rsh kafka-cluster-kafka-0 bin/kafka-consumer-groups.sh --bootstrap-server kafka-cluster-kafka-bootstrap:9092 --group my-hello-world-consumer --reset-offsets --topic my-topic --execute --to-earliest 
@@ -347,7 +348,7 @@ NAME                                   READY   STATUS    RESTARTS   AGE     IP  
 hello-world-consumer-8f9cd7dfd-59xnd   1/1     Running   0          6m18s   10.128.0.77   crc-45nsk-master-0   <none>           <none>
 ```
 
-``bash 
+```bash 
 oc logs hello-world-consumer-8f9cd7dfd-59xnd 
 
 2020-04-21 09:12:59 INFO  KafkaConsumerExample:24 - Received message:
