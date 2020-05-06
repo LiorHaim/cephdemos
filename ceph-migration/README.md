@@ -1,6 +1,6 @@
 # The beauty in Ceph's modularity 
 
-Ceph is a distributed storage system, most of the people treat Ceph as it is a very complex system, full of components needed to be managed. Hard work and effort has been given to turn Ceph to what it is today, a portable, resilient, performent, self-healing storage system. With Ceph, you can easily have millions and billions of objects moving in the cluster to save the wanted state. The fact that Ceph is a Software Defined Storage system helps us being more flexible with the hardware we choose, the operating system we pick and even the location the servers are in. For example, we can have a Ceph cluster running both RHEL and CentOS operating systems in a hybrid way, running on different racks or even geo-locations (not recommended). Today I want to talk with you guys on the beauty of Ceph's modularity, we'll see how we can move 65,000 objects between servers running different OSD backends (TBD) live without having any "maintanace" window needed to be taken, we just move the data between servres while the cutomers can still continue working with our Ceph cluster. We'll see how we can throttle the migration process, improve our performance by using some new features, and eventually have our entire data located on a whole new set of servers located on a different location (can be a rack, a datacenter, or even a region).
+Ceph is a distributed storage system, most of the people treat Ceph as it is a very complex system, full of components needed to be managed. Hard work and effort has been given to turn Ceph to what it is today, a portable, resilient, performent, self-healing storage system. With Ceph, you can easily have millions and billions of objects moving in the cluster to save the wanted state. The fact that Ceph is a Software Defined Storage system helps us being more flexible with the hardware we choose, the operating system we pick and even the location the servers are in. For example, we can have a Ceph cluster running both RHEL and CentOS operating systems in a hybrid way, running on different racks or even geo-locations (not recommended). Today I want to talk with you guys on the beauty of Ceph's modularity, we'll see how we can move ~70,000 objects between servers running different OSD backends (TBD) live without having any "maintanace" window needed to be taken, we just move the data between servres while the cutomers can still continue working with our Ceph cluster. We'll see how we can throttle the migration process, improve our performance by using some new features, and eventually have our entire data located on a whole new set of servers located on a different location (can be a rack, a datacenter, or even a region).
 
 ## Prerequisites
 
@@ -16,6 +16,8 @@ CRUSH rule - Tells Ceph which protection strategy to use (EC/Replica), where to 
 CRUSH bucket - A container that holds virtually a set of devices (hosts, racks, disks, datacenters, etc).
 
 Let's start by looking on our OSD tree, showing us that we have 2 root buckets, which means that we have two seperated virtual containers in this cluster. I have added the `destination` root bucket and added 3 hosts where each host has 2 OSDs. These hosts contain Bluestore OSDs, while the `default` hosts contain Filestore OSDs, they'll use the Objectstore API to move data between them. 
+
+```bash
 $ ceph osd tree 
 
 ID  CLASS WEIGHT  TYPE NAME        STATUS REWEIGHT PRI-AFF 
@@ -39,15 +41,18 @@ ID  CLASS WEIGHT  TYPE NAME        STATUS REWEIGHT PRI-AFF
  -5       0.09579     host osd2                            
   3   hdd 0.04790         osd.3        up  1.00000 1.00000 
  11   hdd 0.04790         osd.11       up  1.00000 1.00000 
-
+```
 
 Let's create a pool, so that our OSDs will have some PGs distributed among them: 
 
+```bash
 $ ceph osd pool create bench 128 128  
 pool 'bench' created
+```
 
 Now let's look a the first 6 OSDs (the `destination` hosts OSDs), we see that we have 0 PGs, which means they won't get any data when we will write to the cluster. This happens because the CRUSH rule tells Ceph to store data only on the `default` OSDs, we'll see it later: 
 
+```bash
 $ ceph osd df -f json-pretty | jq '.nodes[0:6][].pgs'
 0
 0
@@ -55,6 +60,7 @@ $ ceph osd df -f json-pretty | jq '.nodes[0:6][].pgs'
 0
 0
 0
+```
 
 Now let's look at the second set of 6 OSDs (the `default` hosts OSDs), we see that we have pgs which means those OSDs will get data when we'll first write to the cluster:
 
