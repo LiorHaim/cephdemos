@@ -1,6 +1,6 @@
 # The beauty in Ceph's modularity 
 
-Ceph is a distributed storage system, most of the people treat Ceph as it is a very complex system, full of components needed to be managed. Hard work and effort has been given to turn Ceph to what it is today, a portable, resilient, performent, self-healing storage system. With Ceph, you can easily have millions and billions of objects moving in the cluster to save the wanted state. The fact that Ceph is a Software Defined Storage system helps us being more flexible with the hardware we choose, the operating system we pick and even the location the servers are in. For example, we can have a Ceph cluster running both RHEL and CentOS operating systems in a hybrid way, running on different racks or even geo-locations (not recommended). Today I want to talk with you guys on the beauty of Ceph's modularity, we'll see how we can move ~70,000 objects between servers running different OSD backends (TBD) live without having any "maintanace" window needed to be taken, we just move the data between servres while the cutomers can still continue working with our Ceph cluster. We'll see how we can throttle the migration process, improve our performance by using some new features, and eventually have our entire data located on a whole new set of servers located on a different location (can be a rack, a datacenter, or even a region).
+Ceph is a distributed storage system, most of the people treat Ceph as it is a very complex system, full of components needed to be managed. Hard work and effort has been given to turn Ceph to what it is today, a portable, resilient, performent, self-healing storage system. With Ceph, you can easily have millions and billions of objects moving in the cluster to save the wanted state. The fact that Ceph is a Software Defined Storage system helps us in being more flexible with the hardware we choose, the operating system we pick and even the location the servers are in. For example, we can have a Ceph cluster running both RHEL and CentOS operating systems in a hybrid way, running on different racks or even geo-locations (not recommended). Today I want to talk with you guys on the beauty of Ceph's modularity, we'll see how we can move ~70,000 objects between servers running different OSD backends (TBD) live without having any "maintanace" window needed to be taken, we just move the data between servres while the cutomers can still continue working with our Ceph cluster. We'll see how we can throttle the migration process, improve our performance by using some new features, and eventually have our entire data located on a whole new set of servers located on a different location (can be a rack, a datacenter, or even a region).
 
 ## Prerequisites
 
@@ -76,7 +76,10 @@ $ ceph osd df -f json-pretty | jq '.nodes[6:12][].pgs'
 ```
 
 Let's write some data to the cluster to fill it up a bit, we'll use the `rados bench` tool write 4KiB objects for 200 seconds without cleaning up the data after the writing process has finished:  
-rados bench -p bench -o 4096 -t 16 200 write --no-cleanup
+
+```bash 
+$rados bench -p bench -o 4096 -t 16 200 write --no-cleanup
+```
 
 Now if we look at the cluster, we see that we have ~70,000 objects written to the cluster (don't mind the capacity, I had some data before starting this demo): 
 
