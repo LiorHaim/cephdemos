@@ -78,7 +78,9 @@ Let's write some data to the cluster to fill it up a bit, we'll use the `rados b
 rados bench -p bench -o 4096 -t 16 200 write --no-cleanup
 
 Now if we look at the cluster, we see that we have ~70,000 objects written to the cluster (don't mind the capacity, I had some data before starting this demo): 
-ceph -s
+
+```bash
+$ ceph -s
 
   cluster:
     id:     6c701fa4-15b3-4276-b252-c22591ea5410
@@ -97,7 +99,7 @@ ceph -s
     objects: 68.64k objects, 267 MiB
     usage:   25 GiB used, 563 GiB / 588 GiB avail
     pgs:     160 active+clean
-
+```
 
 Let's create a new CRUSH rule, that says that data should reside on the root bucket called `destination`, the replica factor is the default (which is 3), the failure domain is host, and the device type is hdd (all of the device types are hdd in this demo, the only difference is the root bucket). Eventually, Ceph will use the `destination` root bucket resources to satisfy the end state. 
 ceph osd crush rule create-replicated replicated_destination destination host hdd
