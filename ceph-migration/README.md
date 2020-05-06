@@ -6,6 +6,7 @@ Ceph is a distributed storage system, most of the people treat Ceph as it is a v
 
 * A running Ceph cluster (minimum luminous/RHCS3.0)
 
+## Introsuction
 First of all let's have a short recap on Ceph's compnents: 
 
 * OSD - Object Storage Daemon, a process responsible for writing our data to the disk. usually 1:1 ratio between OSD process and a disk (each process writes and reads from one disk only).
