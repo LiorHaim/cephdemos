@@ -13,8 +13,8 @@ First of all let's have a short recap on Ceph's compnents:
 * OSD Backend - Holds the information on how workloads performs against the disk, whether it's and LVM, an entire disk, or a partition that the OSD process needs to interact with. In earlier versions Filestore was used (was based on a Journal device used as a "persistent write cache" and a partition uses a whole disk for storing the data), and in the current versions Filestore is deprecated and Bluestore is being used (based on LVM, having no filesystem overhead by using block device for storing data and a dedicated lvm for storing metadata). 
 * Objectstore API - an unified API, that provides the ability of running both Bluestore and Filestore OSDs in the same cluster sharing data. They are both using the same API, so data can be moved between them with no problem although they have a whole different bakcend implementations. 
 * CRUSH map - responsible holding the location of every data component in the cluster, this map tells Ceph how it should treat our data, where it should store it, and what does it needs to do when a failure occures. 
-CRUSH rule - Tells Ceph which protection strategy to use (EC/Replica), where to store the data (which devices and servers) and how. 
-CRUSH bucket - A container that holds virtually a set of devices (hosts, racks, disks, datacenters, etc).
+* CRUSH rule - Tells Ceph which protection strategy to use (EC/Replica), where to store the data (which devices and servers) and how. 
+* CRUSH bucket - A container that holds virtually a set of devices (hosts, racks, disks, datacenters, etc).
 
 Let's start by looking on our OSD tree, showing us that we have 2 root buckets, which means that we have two seperated virtual containers in this cluster. I have added the `destination` root bucket and added 3 hosts where each host has 2 OSDs. These hosts contain Bluestore OSDs, while the `default` hosts contain Filestore OSDs, they'll use the Objectstore API to move data between them. 
 
