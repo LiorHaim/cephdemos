@@ -106,9 +106,12 @@ $ ceph -s
 ```
 
 Let's create a new CRUSH rule, that says that data should reside on the root bucket called `destination`, the replica factor is the default (which is 3), the failure domain is host, and the device type is hdd (all of the device types are hdd in this demo, the only difference is the root bucket). Eventually, Ceph will use the `destination` root bucket resources to satisfy the end state. 
-ceph osd crush rule create-replicated replicated_destination destination host hdd
 
-Let's validate the new CRUSH rule has been created, and compare between the two. We see that under `item_name` we have a different root bucket to use. Of course creating this CRUSH rule won't do anything yet because the pool still used the old CRUSH rule: 
+```bash
+$ ceph osd crush rule create-replicated replicated_destination destination host hdd
+```
+
+Let's validate the new CRUSH rule has been created, and compare between the two of them. We see that under `item_name` we have a different root bucket to use. Of course creating this CRUSH rule won't do anything yet because the pool still used the old CRUSH rule: 
 
 ```bash 
 $ ceph osd crush dump -f json-pretty | jq '.rules'
@@ -163,7 +166,7 @@ $ ceph osd crush dump -f json-pretty | jq '.rules'
 ]
 ```
 
-Let's change bench's pool CRUSH rule, by changing this value we tell Ceph to move all the data from the old servers to the new servers, to be percised between the Filestore OSDs to the Bluestore ones: 
+Let's change bench's pool CRUSH rule, by changing this value we tell Ceph to move all the data from the old servers to the new servers. to be percised, between the Filestore OSDs to the Bluestore ones: 
 
 ```bash 
 $ ceph osd pool set bench crush_rule replicated_destination
@@ -215,9 +218,8 @@ $ ceph -s
 
   cluster:
     id:     6c701fa4-15b3-4276-b252-c22591ea5410
-    health: HEALTH_WARN
-            application not enabled on 1 pool(s)
- 
+    health: HEALTH_OK
+    
   services:
     mon: 1 daemons, quorum mon0 (age 2h)
     mgr: mon0(active, since 2h)
@@ -259,7 +261,7 @@ $ ceph osd df -f json-pretty | jq '.nodes[6:12][].pgs'
 0
 ```
 
-Now that we have our data fully migrated, Let's use the `balancer` feature to create even distribution of the PGs amonf the OSDS. By default, the PGs are distributed with CRUSH between the OSDs so that each PG is backed up by a set of OSDS (depends on the protection strategy and the replica factor). Let's enable the balancer and create a plan: 
+Now that we have our data fully migrated, Let's use the `balancer` feature to create an even distribution of the PGs among the OSDS. By default, the PGs are distributed with CRUSH between the OSDs so that each PG is backed up by a set of OSDS (depends on the protection strategy and the replica factor). Let's enable the balancer and create a plan: 
 
 ```bash 
 $ ceph mgr module enable balancer
@@ -284,7 +286,7 @@ $ ceph balancer status
 }
 ```
 
-After the distribution process has finised, we see that now we have an even number of PGs per OSD. This thing can improve your performance dramatically (eventually it will prevent imbalanced utilization of the disk and will create harmony): 
+After the distribution process has finised, we see that now we have an even number of PGs per OSD. This thing can improve your performance dramatically (eventually it will prevent imbalanced utilization on the disks and will create harmony): 
 
 ```bash 
 $ ceph osd df -f json-pretty | jq '.nodes[0:6][].pgs'
@@ -297,7 +299,7 @@ $ ceph osd df -f json-pretty | jq '.nodes[0:6][].pgs'
 80
 ```
 
-Now after we have a perfect new environment, let's throw the old servers away. NO! the whole thing with software defined it we can re-use our hardware! let's scale out the new environemnt. To do so, I have runied the old servers, created Bluestore OSDs on them and added them to the cluster. Now let's move them into the `destination` root bucket: 
+Now after we have a perfect new environment, let's throw the old servers away. NO! the whole thing about software defined is to re-use our hardware! let's scale out the new environemnt. To do so, I have runied the old servers, created Bluestore OSDs on them and added them to the cluster. Now let's move them into the `destination` root bucket: 
 
 ```bash 
 ceph osd crush move osd0 root=destination
@@ -356,7 +358,7 @@ $ ceph osd df -f json-pretty | jq '.nodes[0:12][].pgs'
 33
 ```
 
-Great! but we haven't finished, let's take a few minutes and let the balancer do it's magic. After the balancer finishes, we see that we have out PGs distributed on more devices evenly. This thing will significantly help our performance because we have more spindles, more servers, and we have our workloads evenly distributed among those disks! 
+Great! but we haven't finished, let's take a few minutes and let the balancer do it's magic. After the balancer finishes, we see that we have our PGs distributed on more devices evenly. This thing can significantly help your performance because we have more spindles, more servers, and our workloads are evenly distributed among those disks! 
 
 ```bash 
 $ ceph osd df -f json-pretty | jq '.nodes[0:12][].pgs'
@@ -377,4 +379,4 @@ $ ceph osd df -f json-pretty | jq '.nodes[0:12][].pgs'
 
 ## Conclusion 
 
-We saw how we can take adventage of Ceph's portability, replication and self-healing mechanisms to create an harmonic cluster moving data between locations, servers and OSD backends without the customer even have to know we play we their data. We also saw how we can tune performance by using the `balancer` feature and how we can throttle the migration process to prevent cutsomers performance issued. Hope this article has convienced you that Ceph is more than just a complex distributed storage system. Hope you have enjoyed this article, see you next time :)
+We saw how we can take adventage of Ceph's portability, replication and self-healing mechanisms to create an harmonic cluster moving data between locations, servers and OSD backends without the customers even have to know that we have played we their data. We also saw how we can tune performance by using the `balancer` feature and how we can throttle the migration process to prevent cutsomers performance issues. Hope this article has convienced you that Ceph is more than just a complex distributed storage system. Hope you have enjoyed this article, see you next time :)
