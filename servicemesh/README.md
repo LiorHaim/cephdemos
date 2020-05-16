@@ -99,6 +99,7 @@ oc new-project bookinfo
 
 Now let's create the actual CR, which will tell our `ServiceMeshControlPlane` that we have a candidate for it to manage, which is actually our bookinfo project. Once we will create this CR our management system will start managing the bookinfo project. It will inject Istio's sidecars and will start to collect information on out application:
 
+```bash
 oc create -f - <<EOF
 apiVersion: maistra.io/v1
 kind: ServiceMeshMemberRoll
