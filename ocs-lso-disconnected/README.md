@@ -308,8 +308,6 @@ EOF
 
 Now we can see that we have all the needed operators in the `OperatorHub` tab in the openshift console. From here you could use my previous blog on deploying OCS using the LSO regularly. 
 
-### Operators Image 
-
 ## Conclusion 
 
 So we have been through the process of mirroring all the needed catalogs and images for the OCS and LSO operators to operate in a disconnected environment. This process requires some manual work, but in later version, when disconnected environments installation of OCS will be supported (currently in Development Preview) the process will be easier. 
