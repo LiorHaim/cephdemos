@@ -124,7 +124,7 @@ $ export AUTH_FILE="pull-secret-bundle.json"
 $ export MIRROR_REGISTRY_DNS="${YOUR_REGISTRY_DNS_NAME}"
 ```
 
-When we are using a disconnected Catalog, basically we should build the container image and push it to our registry. This image represents what we see in the 'Operatorhub` tab in the openshift console. 
+When we are using a disconnected Catalog, basically we should build the container image and push it to our registry. This image represents what we see in the `Operatorhub` tab in the openshift console. 
 Later on, we will create a catalogSource that will point to this container and will basically present all the operators that we have in our registry. Now let's build the catalog itself: 
 
 ```bash
@@ -135,7 +135,7 @@ $ oc adm catalog build --appregistry-org redhat-operators --from=registry.redhat
 
 This process takes the operator from the redhat-operators repository from the `registry.redhat.io` registry using the provided pull-secret and mirrors it into our catalog. The container image will be built and pushed into the mirror registry with the provided tag.
 
-The OperatorHub object has a default configuration for sources it should pull the images from, since we are in a disconnected environment and we have no catalogSource, we'll just disable all the existing sources until we create the catalogSources in a later stage: 
+The OperatorHub object has a default configuration for sources it should pull the images from, since we are in a disconnected environment and we have no catalogSource, we'll just disable all the existing sources until we create the `catalogSources` in a later stage: 
 
 ```bash 
 $ oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
