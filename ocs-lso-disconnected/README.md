@@ -2,7 +2,7 @@
 
 ## Important Note 
 
-Installing OCS in a disconnected environment is currently in a Development Preview, to do so you should contant Red Hat support to create a support exception for the installation phase. 
+Installing OCS in a disconnected environment is currently in a `Development Preview`, to do so you should contant Red Hat support to create a support exception for the installation phase. 
 In this demo we will mirror all the needed data for OCS to be deployed using the LSO in a disconnected environment. 
 
 ## Prerequisites
