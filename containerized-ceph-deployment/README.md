@@ -145,15 +145,15 @@ dashboard_enabled: True
 
 Simple as that, just search for each one of those vars in the `group_vars/all.yml` file and change them to suite your own environment. A little explanation on what each of those variables mean: 
 
-* monitor_interface - The interface the Mon container will bind for its ip address and port 
-* public_network - The front-facing network (can be collocated with the cluster network)
-* cluster_network (optional) - The replication network for the OSDs (can be collocated with the public network)
-* radosgw_interface - The interface the RGW container will bind for its ipaddress and port
-* radosgw_num_instances (optional) - The number of RGW containers per server, default is 1
-* ceph_docker_image & ceph_docker_image_tag: Choosing the ceph container image with the right version, the registry can be your own enterprise registry
-* ceph_docker_registry_auth/username/password - In case you use credentials to login to your enterprise registry 
-* containerized_deployment - Will determine whether the containerized auitable playbooks will run 
-* dashboard_enabled - Will deploy Ceph's dashboard using the Mgr module 
+* **monitor_interface** - The interface the Mon container will bind for its ip address and port 
+* **public_network** - The front-facing network (can be collocated with the cluster network)
+* **cluster_network** (optional) - The replication network for the OSDs (can be collocated with the public network)
+* **radosgw_interface** - The interface the RGW container will bind for its ipaddress and port
+* **radosgw_num_instances** (optional) - The number of RGW containers per server, default is 1
+* **ceph_docker_image & ceph_docker_image_tag** - Choosing the ceph container image with the right version, the registry can be your own enterprise registry
+* **ceph_docker_registry_auth/username/password** - In case you use credentials to login to your enterprise registry 
+* **containerized_deployment** - Will determine whether the containerized auitable playbooks will run 
+* **dashboard_enabled** - Will deploy Ceph's dashboard using the Mgr module 
 
 After configurering the `group_vars/all.yml` file, Let's touch the second file needed to be changes. 
 
@@ -182,7 +182,8 @@ ansible-playbook site-container.yml
 The playbook will start deploying our cluster, When the playbook finishes you'll see the following: 
 
 ```bash 
-TASK [show ceph status for cluster ceph] *****************************************************************************************************************************************************
+TASK [show ceph status for cluster ceph] 
+************************************************************************************
 Thursday 02 July 2020  12:25:10 +0000 (0:00:01.088)       0:12:33.779 ********* 
 ok: [ceph-osd1 -> ceph-osd1] => 
   msg:
