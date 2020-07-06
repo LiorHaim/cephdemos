@@ -156,7 +156,7 @@ EOF
 
 This topic has the `strimzi.io/cluster` label that points to the source cluster. Now let's check if the topic was indeed created: 
 
-``bash 
+```bash 
 $ oc get kt  
                                                                                                                         
 NAME       PARTITIONS   REPLICATION FACTOR
