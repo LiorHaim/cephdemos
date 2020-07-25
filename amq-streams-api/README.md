@@ -205,7 +205,7 @@ $ oc exec -it my-cluster-kafka-0 bin/kafka-console-consumer.sh -- --bootstrap-se
 Now let's take a look at the `played-songs` topic: 
 
 ```bash 
-oc exec -it my-cluster-kafka-0 bin/kafka-console-consumer.sh -- --bootstrap-server localhost:9092 --from-beginning --topic played-songs
+$ oc exec -it my-cluster-kafka-0 bin/kafka-console-consumer.sh -- --bootstrap-server localhost:9092 --from-beginning --topic played-songs
 
 2020-07-25T19:52:47.038904Z;Alex
 2020-07-25T19:52:57.038328Z;Burr
