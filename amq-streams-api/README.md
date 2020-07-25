@@ -102,7 +102,7 @@ my-cluster-zookeeper-2                                 1/1     Running   0      
 Great! we have our Kafka cluster ready to go :) 
 Now let's create the two topics that will be used in this demo, to do so we will use the `KafkaTopic` CR: 
 
-``bash 
+```bash 
 oc create -f - <<EOF
 apiVersion: kafka.strimzi.io/v1beta1
 kind: KafkaTopic
