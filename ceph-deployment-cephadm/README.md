@@ -257,6 +257,14 @@ Now, after we have verified we have three disks for each OSD server, we should h
 ```bash 
 $ ceph orch apply osd --all-available-devices
 ```
+Now let's test it a bit with running RGW daemon that will expose an S3 interface: 
+
+```bash 
+$ radosgw-admin realm create --rgw-realm=default --default
+$ radosgw-admin zonegroup create --rgw-zonegroup=default --master --default
+$ radosgw-admin zone create --rgw-zonegroup=default --rgw-zone=us-east-1 --master --default
+$ ceph orch apply rgw default us-east-1 --placement="1 mon0"
+```
 
 Give `cephadm` a minute or two to deploy those daemons, and eventually let's use the `ceph status` command in order to verify our cluster is healthy: 
 
@@ -283,14 +291,6 @@ $ ceph status
 ```
 
 Great! we have a fully functional cluster :) 
-Now let's test it a bit with running RGW daemon that will expose an S3 interface: 
-
-```bash 
-$ radosgw-admin realm create --rgw-realm=default --default
-$ radosgw-admin zonegroup create --rgw-zonegroup=default --master --default
-$ radosgw-admin zone create --rgw-zonegroup=default --rgw-zone=us-east-1 --master --default
-$ ceph orch apply rgw default us-east-1 --placement="1 mon0"
-```
 
 In those commands, we have created all the RGW configuration that is needed for us to start using S3. Now we'll use the `awscli` tool to start interacting with our S3 interface.
 Install the awscli binary: 
