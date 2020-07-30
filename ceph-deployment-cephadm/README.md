@@ -260,7 +260,7 @@ $ ceph orch apply osd --all-available-devices
 
 Give `cephadm` a minute or two to deploy those daemons, and eventually let's use the `ceph status` command in order to verify our cluster is healthy: 
 
-``bash 
+```bash 
 $ ceph status
 
   cluster:
