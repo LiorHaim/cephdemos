@@ -297,6 +297,7 @@ Install the awscli binary:
 
 ```bash 
 $ yum install awscli 
+```
 
 Create a RGW user using `radosgw-admin` comand: 
 
