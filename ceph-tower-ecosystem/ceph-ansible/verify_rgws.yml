@@ -1,0 +1,14 @@
+- hosts: localhost
+  tasks:
+  - name: Test RGW access
+    uri:
+      method: GET
+      url: "http://{{ groups['lbs'][0] }}:8080"
+    register: result
+
+
+  - name: Print test result if OK
+    debug:
+      msg: "RGWs status for URL {{ result.url }} is OK!"
+    when: result.status|int == 200
+

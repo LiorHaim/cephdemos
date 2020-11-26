@@ -1,0 +1,10 @@
+---
+dummy:
+
+lvm_volumes:
+{% for item in lv_devices %}
+  - data: {{ item }}-data
+    data_vg: {{ item }}-data
+    crush_device_class: hdd
+{% endfor %}
+

@@ -1,0 +1,8 @@
+---
+dummy:
+
+lvm_volumes:
+  - data: sdb-data
+    data_vg: sdb-data
+    crush_device_class: hdd
+

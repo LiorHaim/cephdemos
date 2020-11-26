@@ -1,0 +1,32 @@
+--- 
+- hosts: osds
+  vars: 
+    lv_devices:
+    - "sdb"
+  tasks: 
+  - name: Create a VG for All Disks 
+    lvg: 
+      force: yes 
+      pvs: "/dev/{{ item }}"
+      pesize: 4 
+      state: present 
+      vg: "{{ item }}-data"
+    with_items: 
+    - "{{ lv_devices }}"
+
+  - name: Create LVM on All Disks 
+    lvol: 
+      lv: "{{ item }}-data"
+      vg: "{{ item }}-data"
+      size: 100%FREE
+      pvs: "/dev/{{ item }}"
+    with_items:
+    - "{{ lv_devices }}"
+
+  - name: generate osds.yml based on the given information 
+    template:
+      src: osds.yml.j2
+      dest: group_vars/osds.yml
+    delegate_to: localhost
+
+
