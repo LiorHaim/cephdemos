@@ -3,9 +3,6 @@
     ansible_connection: local
     ansible_user: root
   tasks:
-  - name: Install ceph-common package 
-    yum: name=ceph-common state=present 
-
   - name: Copy needed config and cred files
     fetch: 
       src: "{{ item }}" 
