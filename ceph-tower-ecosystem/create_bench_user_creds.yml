@@ -2,9 +2,9 @@
   tasks:
   - name: Create Bench User Credentials
     fetch: 
-    src: /etc/ceph/ceph.conf
-    dest: /etc/ceph/ceph.conf
-    flat: yes 
+      src: /etc/ceph/ceph.conf
+      dest: /etc/ceph/ceph.conf
+      flat: yes 
 
   - name: Create Bench User Credentials 
     shell: |
