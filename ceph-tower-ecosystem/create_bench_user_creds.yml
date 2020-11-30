@@ -1,5 +1,11 @@
 - hosts: all
   tasks:
+  - name: Create Bench User Credentials
+    fetch: 
+    src: /etc/ceph/ceph.conf
+    dest: /etc/ceph/ceph.conf
+    flat: yes 
+
   - name: Create Bench User Credentials 
     shell: |
       radosgw-admin user create --uid=bench --display-name=bench --access-key=bench --secret=bench 
