@@ -1,25 +1,16 @@
 - hosts: all
   tasks:
   - name: Copy needed conf and cred files 
-    fetch: 
-      src: /etc/ceph/ceph.conf
-      dest: /etc/ceph/ceph.conf
-      flat: yes 
-
-  - name: Copy needed conf and cred files
-    fetch:
-      src: /etc/ceph/ceph.client.admin.keyring
-      dest: /etc/ceph/ceph.client.admin.keyring
-      flat: yes
+    yum: 
+      name: ceph-common
+      state: present 
 
   - name: Create Bench User Credentials 
     shell: |
       radosgw-admin user create --uid=bench --display-name=bench --access-key=bench --secret=bench 
     register: result
-    delegate_to: localhost
 
   - name: Print test result if OK
     debug:
       msg: "Created a Bench user!"
     when: result is succeeded
-    delegate_to: localhost
