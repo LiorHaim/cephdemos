@@ -5,11 +5,11 @@
   tasks:
   - name: Copy needed config and cred files
     fetch: 
-      src: "{{ item }}" 
+      src: "/etc/ceph/{{ item }}" 
       dest: "/etc/ceph/"
     with_items: 
-    - "/etc/ceph/ceph.conf"
-    - "/etc/ceph/ceph.client.admin.keyring"
+    - "ceph.conf"
+    - "ceph.client.admin.keyring"
 
   - name: Create Bench User Credentials 
     shell: |
