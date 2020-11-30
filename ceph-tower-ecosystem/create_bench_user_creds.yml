@@ -1,0 +1,24 @@
+- hosts: localhost
+  tasks:
+  - name: Install ceph-common package 
+    yum: name=ceph-common state=present 
+
+  - name: Copy needed config and cred files
+    fetch: 
+      src: "{{ item }}" 
+      dest: "/etc/ceph/"
+    with_items: 
+    - "/etc/ceph/ceph.conf"
+    - "/etc/ceph/ceph.client.admin.keyring"
+
+  - name: Create Bench User Credentials 
+    shell: |
+      radosgw-admin user create --uid=bench --display-name=bench --access-key=bench --secret=bench 
+    register: result
+
+
+  - name: Print test result if OK
+    debug:
+      msg: "Created a Bench user!"
+    when: result is succeeded
+
