@@ -4,6 +4,7 @@
     fetch: 
       src: "/etc/ceph/{{ item }}" 
       dest: "/etc/ceph/"
+      flat: yes 
     with_items: 
     - "ceph.conf"
     - "ceph.client.admin.keyring"
