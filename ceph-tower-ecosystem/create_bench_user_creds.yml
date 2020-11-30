@@ -1,15 +1,5 @@
 - hosts: all
   tasks:
-  - name: Copy needed config and cred files
-    fetch: 
-      src: "/etc/ceph/{{ item }}" 
-      dest: "/etc/ceph/"
-      flat: yes 
-    with_items: 
-    - "ceph.conf"
-    - "ceph.client.admin.keyring"
-    run_once: yes
-
   - name: Create Bench User Credentials 
     shell: |
       radosgw-admin user create --uid=bench --display-name=bench --access-key=bench --secret=bench 
