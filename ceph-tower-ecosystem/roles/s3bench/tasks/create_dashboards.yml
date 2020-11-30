@@ -6,5 +6,6 @@
   delay: 3
   tags:
   - create_dashboards
+  delegate_to: localhost
 
 
