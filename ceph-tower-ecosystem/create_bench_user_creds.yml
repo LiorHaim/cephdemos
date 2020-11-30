@@ -3,7 +3,7 @@
   - name: Copy needed config and cred files
     fetch: 
       src: "/etc/ceph/{{ item }}" 
-      dest: "/etc/ceph/"
+      dest: "/etc/ceph"
       flat: yes 
     with_items: 
     - "ceph.conf"
