@@ -8,7 +8,6 @@
     with_items: 
     - "ceph.conf"
     - "ceph.client.admin.keyring"
-    delegate_to: localhost
 
   - name: Create Bench User Credentials 
     shell: |
