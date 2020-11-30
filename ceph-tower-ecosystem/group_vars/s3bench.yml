@@ -1,0 +1,20 @@
+################ General Config ################################3######
+elasticsearch_image: docker.elastic.co/elasticsearch/elasticsearch:7.7.1
+kibana_image: docker.elastic.co/kibana/kibana:7.7.1
+
+################ S3bench Config #######################################
+s3bench_instances: 10
+s3bench_image: docker.io/shonpaz123/s3bench
+
+############### Workload Config #######################################
+access_key: MAV3MB7HBFJ9EN3R5O15
+secret_key: UJSJXsZez1BkD26q25kayd5J5nb3vq7yTjsIza6D
+endpoint_url: http://192.168.1.20:8000
+bucket_name: bucket
+object_size: 4KiB
+elastic_url: http://localhost:9200 
+num_objects: 1000 
+workload: read
+
+
+
