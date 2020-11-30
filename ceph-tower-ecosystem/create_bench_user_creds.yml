@@ -1,11 +1,5 @@
 - hosts: all
   tasks:
-  - name: Copy needed files 
-    shell: | 
-      sshpass -p "password" scp root@{{ groups['mons'][0] }}:/etc/ceph/ceph.conf /etc/ceph/
-      sshpass -p "password" scp root@{{ groups['mons'][0] }}:/etc/ceph/ceph.client.admin.keyring /etc/ceph/
-    delegate_to: localhost
-
   - name: Create Bench User Credentials 
     shell: |
       radosgw-admin user create --uid=bench --display-name=bench --access-key=bench --secret=bench 
