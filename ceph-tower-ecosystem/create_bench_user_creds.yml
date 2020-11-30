@@ -1,5 +1,9 @@
 - hosts: all
   tasks:
+  - name: Copy needed files 
+    shell: | 
+      scp {{ inventory_hostname }}:/etc/ceph/ceph.conf /etc/ceph/
+      scp {{ inventory_hostname }}:/etc/ceph/ceph.client.admin.keyring /etc/ceph/
   - name: Create Bench User Credentials 
     shell: |
       radosgw-admin user create --uid=bench --display-name=bench --access-key=bench --secret=bench 
