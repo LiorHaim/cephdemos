@@ -8,6 +8,7 @@
     with_items: 
     - "ceph.conf"
     - "ceph.client.admin.keyring"
+    run_once: yes
 
   - name: Create Bench User Credentials 
     shell: |
