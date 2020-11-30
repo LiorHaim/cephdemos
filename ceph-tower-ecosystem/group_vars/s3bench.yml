@@ -9,10 +9,10 @@ s3bench_image: docker.io/shonpaz123/s3bench
 ############### Workload Config #######################################
 access_key: bench
 secret_key: bench
-endpoint_url: http://worker01:8080
+endpoint_url: http://192.168.150.4:8080
 bucket_name: bucket
 object_size: 4KiB
-elastic_url: http://worker03:9200 
+elastic_url: http://localhost:9200 
 num_objects: 1000 
 workload: write
 
