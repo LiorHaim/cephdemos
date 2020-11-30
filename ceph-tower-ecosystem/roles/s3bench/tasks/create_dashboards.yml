@@ -1,5 +1,5 @@
 - name: Create dasboards with an API requests 
-  command: "curl -X POST worker03:5601/api/saved_objects/_import -H 'kbn-xsrf: true' --form file=@../roles/s3bench/files/s3_dashboard.ndjson" 
+  command: "curl -X POST worker03:5601/api/saved_objects/_import -H 'kbn-xsrf: true' --form file=@./roles/s3bench/files/s3_dashboard.ndjson" 
   register: result
   until: result is succeeded
   retries: 40
