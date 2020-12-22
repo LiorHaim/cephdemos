@@ -1,0 +1,54 @@
+apiVersion: starburstdata.com/v1
+kind: Presto
+metadata:
+  name: presto-odh
+  namespace: odh
+spec:
+  nameOverride: presto-odh
+  #licenseSecretName: presto-license
+  image:
+    name: 'registry.connect.redhat.com/starburst/presto:338-e.0-k8s-0.32-ubi8'
+    pullPolicy: IfNotPresent
+  service:
+    name: presto-service
+    type: ClusterIP
+  memory:
+    nodeMemoryHeadroom: 1Gi
+  coordinator:
+    cpuLimit: '1'
+    cpuRequest: '1'
+    memoryAllocation: '4Gi'
+  worker:
+    count: 2
+    cpuLimit: '2'
+    cpuRequest: '2'
+    memoryAllocation: '4Gi'
+    prestoWorkerShutdownGracePeriodSeconds: 1
+  hive:
+    additionalProperties: |
+      connector.name=hive-hadoop2
+      hive.s3.endpoint=http://172.30.255.77
+      hive.s3.signer-type=S3SignerType
+      hive.s3.path-style-access=true
+      hive.s3.staging-directory=/tmp
+      hive.s3.ssl.enabled=false
+      hive.s3.sse.enabled=false
+    awsSecretName: aws-secret
+    internalMetastore:
+      cpu: 0.5
+      image:
+        imagepullPolicy: IfNotPresent
+      memory: 0.5G
+      postgreSql:
+        jdbcUrl: 'jdbc:postgresql://postgres.odh.svc.cluster.local/postgresdb'
+        password: redhat
+        username: redhat
+      s3Endpoint: 'http://172.30.255.77'
+  additionalCatalogs:
+          # postgresql: >
+          #   connector.name=postgresql
+          #   connection-url=jdbc:postgresql://postgresql.odh.svc.cluster.local/redhat
+          #   connection-user=redhat
+          #   connection-password=redhat
+          #       #tpcds: |
+          #       #  connector.name=tpcds
