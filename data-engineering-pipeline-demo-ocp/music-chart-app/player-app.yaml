@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: player-app
+  name: player-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: player-app
+  template:
+    metadata:
+      labels:
+        app: player-app
+    spec:
+      containers:
+      - name: player-app
+        image: shonpaz123/kafka-streams:player-app

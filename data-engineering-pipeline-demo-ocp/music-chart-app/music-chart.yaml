@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: music-chart
+  name: music-chart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-chart
+  template:
+    metadata:
+      labels:
+        app: music-chart
+    spec:
+      containers:
+      - name: music-chart
+        image: shonpaz123/kafka-streams:music-chart

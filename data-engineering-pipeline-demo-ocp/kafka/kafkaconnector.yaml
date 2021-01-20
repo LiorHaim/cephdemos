@@ -1,0 +1,21 @@
+apiVersion: kafka.strimzi.io/v1alpha1
+kind: KafkaConnector
+metadata:
+  name: s3-sink-connector
+  labels:
+    strimzi.io/cluster: my-connect-cluster
+spec:
+  class: org.apache.camel.kafkaconnector.aws2s3.CamelAws2s3SinkConnector
+  tasksMax: 1
+  config:
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+    topics: music-chart-songs-store-changelog
+    camel.sink.maxPollDuration: 10000
+    camel.sink.endpoint.keyName: songs.json/${date:now:yyyyMMdd-HHmmssSSS}-${exchangeId}
+    camel.component.aws2-s3.accessKey: minio
+    camel.component.aws2-s3.secretKey: minio123
+    camel.component.aws2-s3.region: us-east-1
+    camel.component.aws2-s3.overrideEndpoint: true 
+    camel.component.aws2-s3.uriEndpointOverride: http://minio:9000
+    camel.sink.path.bucketNameOrArn: songs

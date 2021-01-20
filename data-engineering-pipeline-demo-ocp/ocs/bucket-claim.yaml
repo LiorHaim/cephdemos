@@ -1,0 +1,11 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: s3-bucket
+  namespace: amq
+  labels:
+    bucket-provisioner: openshift-storage.ceph.rook.io-bucket
+spec:
+  generateBucketName: s3-bucket
+  storageClassName: ocs-external-storagecluster-ceph-rgw
+
