@@ -1,0 +1,9 @@
+oc rsh $(oc get pods | grep coordinator | grep Running | awk '{print $1}')
+
+presto-cli --catalog hive
+
+CREATE SCHEMA hive.songs WITH (location='s3a://music-chart-songs-store-changelog/music-chart-songs-store-changelog.json/');
+
+USE hive.songs;
+
+CREATE TABLE songs (count int, songName varchar) WITH (format = 'json', external_location = 's3a://music-chart-songs-store-changelog/music-chart-songs-store-changelog.json/');

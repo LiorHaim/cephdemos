@@ -10,12 +10,12 @@ spec:
   config:
     key.converter: org.apache.kafka.connect.storage.StringConverter
     value.converter: org.apache.kafka.connect.storage.StringConverter
-    topics: songs
+    topics: music-chart-songs-store-changelog
     camel.sink.maxPollDuration: 10000
-    camel.sink.endpoint.keyName: ${date:now:yyyyMMdd-HHmmssSSS}-${exchangeId}
-    camel.component.aws2-s3.accessKey: test
-    camel.component.aws2-s3.secretKey: test
+    camel.sink.endpoint.keyName: music-chart-songs-store-changelog.json/${date:now:yyyyMMdd-HHmmssSSS}-${exchangeId}
+    camel.component.aws2-s3.accessKey: HC8V2PT7HX8ZFS8NQ37R
+    camel.component.aws2-s3.secretKey: Y6CENKXozDDikJHQgkbLFM38muKBnmWBsAA1DXyU 
     camel.component.aws2-s3.region: us-east-1
     camel.component.aws2-s3.overrideEndpoint: true 
     camel.component.aws2-s3.uriEndpointOverride: http://192.168.1.56:8080
-    camel.sink.path.bucketNameOrArn: songs
+    camel.sink.path.bucketNameOrArn: music-chart-songs-store-changelog

@@ -52,22 +52,19 @@ spec:
    - port: 5432
   selector:
    app: postgres
----
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: postgres-pv-volume
-  labels:
-    type: local
-    app: postgres
-spec:
-  #storageClassName: manual
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
+   #---
+   #kind: PersistentVolume
+   #apiVersion: v1
+   #metadata:
+   #  name: postgres-pv-volume
+   #  labels:
+   #    app: postgres
+   #spec:
+   #  storageClassName: ocs-external-storagecluster-ceph-rbd
+   #  capacity:
+   #    storage: 5Gi
+   #  accessModes:
+   #    - ReadWriteOnce
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -78,6 +75,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: ocs-external-storagecluster-ceph-rbd
   resources:
     requests:
       storage: 5Gi

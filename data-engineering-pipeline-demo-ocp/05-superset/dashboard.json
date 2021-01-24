@@ -1,0 +1,222 @@
+{
+    "dashboards": [
+        {
+            "__Dashboard__": {
+                "css": null,
+                "dashboard_title": "My Music Streaming App",
+                "description": null,
+                "json_metadata": "{\"remote_id\": 1}",
+                "position_json": null,
+                "slices": [
+                    {
+                        "__Slice__": {
+                            "cache_timeout": null,
+                            "datasource_name": "songs.admin admin-Query songs.admin admin-Untitled Query-1PlWMRjyi-cW17EJt4B",
+                            "datasource_type": "table",
+                            "id": 1,
+                            "params": "{\"adhoc_filters\": [], \"color_scheme\": \"bnbColors\", \"datasource\": \"1__table\", \"donut\": false, \"granularity_sqla\": null, \"groupby\": [\"songname\"], \"label_colors\": {}, \"labels_outside\": true, \"metric\": \"count\", \"number_format\": \"SMART_NUMBER\", \"pie_label_type\": \"key\", \"row_limit\": 1000, \"show_labels\": true, \"show_legend\": true, \"time_grain_sqla\": \"P1D\", \"time_range\": \"100 years ago : \", \"viz_type\": \"pie\", \"remote_id\": 1, \"datasource_name\": \"admin admin-Query songs.admin admin-Untitled Query-1PlWMRjyi-cW17EJt4B\", \"schema\": \"songs\", \"database_name\": \"songs\"}",
+                            "slice_name": "Streams Per Song",
+                            "viz_type": "pie"
+                        }
+                    },
+                    {
+                        "__Slice__": {
+                            "cache_timeout": null,
+                            "datasource_name": "songs.admin admin-Query songs.admin admin-Untitled Query-1PlWMRjyi-FJz0FwnYC",
+                            "datasource_type": "table",
+                            "id": 2,
+                            "params": "{\"adhoc_filters\": [], \"datasource\": \"2__table\", \"granularity_sqla\": null, \"header_font_size\": 0.3, \"metric\": {\"aggregate\": \"MAX\", \"column\": {\"column_name\": \"count\", \"description\": null, \"expression\": null, \"filterable\": true, \"groupby\": true, \"id\": 4, \"is_dttm\": false, \"optionName\": \"_col_count\", \"python_date_format\": null, \"type\": \"BIGINT\", \"verbose_name\": null}, \"expressionType\": \"SIMPLE\", \"fromFormData\": false, \"hasCustomLabel\": false, \"label\": \"MAX(count)\", \"optionName\": \"metric_kdst5e0jiu_dor0f7x0hhh\", \"sqlExpression\": null}, \"subheader_font_size\": 0.125, \"time_grain_sqla\": \"P1D\", \"time_range\": \"100 years ago : \", \"viz_type\": \"big_number_total\", \"y_axis_format\": \"SMART_NUMBER\", \"remote_id\": 2, \"datasource_name\": \"admin admin-Query songs.admin admin-Untitled Query-1PlWMRjyi-FJz0FwnYC\", \"schema\": \"songs\", \"database_name\": \"songs\"}",
+                            "slice_name": "Most Streamed Song ",
+                            "viz_type": "big_number_total"
+                        }
+                    }
+                ],
+                "slug": null
+            }
+        }
+    ],
+    "datasources": [
+        {
+            "__SqlaTable__": {
+                "cache_timeout": null,
+                "columns": [
+                    {
+                        "__TableColumn__": {
+                            "changed_by_fk": 1,
+                            "changed_on": {
+                                "__datetime__": "2021-01-24T14:32:12"
+                            },
+                            "column_name": "songname",
+                            "created_by_fk": 1,
+                            "created_on": {
+                                "__datetime__": "2021-01-24T14:32:12"
+                            },
+                            "description": null,
+                            "expression": null,
+                            "filterable": true,
+                            "groupby": true,
+                            "id": 1,
+                            "is_active": true,
+                            "is_dttm": false,
+                            "python_date_format": null,
+                            "table_id": 1,
+                            "type": "VARCHAR",
+                            "verbose_name": null
+                        }
+                    },
+                    {
+                        "__TableColumn__": {
+                            "changed_by_fk": 1,
+                            "changed_on": {
+                                "__datetime__": "2021-01-24T14:32:12"
+                            },
+                            "column_name": "count",
+                            "created_by_fk": 1,
+                            "created_on": {
+                                "__datetime__": "2021-01-24T14:32:12"
+                            },
+                            "description": null,
+                            "expression": null,
+                            "filterable": true,
+                            "groupby": true,
+                            "id": 2,
+                            "is_active": true,
+                            "is_dttm": false,
+                            "python_date_format": null,
+                            "table_id": 1,
+                            "type": "BIGINT",
+                            "verbose_name": null
+                        }
+                    }
+                ],
+                "database_id": 3,
+                "default_endpoint": null,
+                "description": null,
+                "fetch_values_predicate": null,
+                "filter_select_enabled": false,
+                "main_dttm_col": null,
+                "metrics": [
+                    {
+                        "__SqlMetric__": {
+                            "changed_by_fk": 1,
+                            "changed_on": {
+                                "__datetime__": "2021-01-24T14:32:12"
+                            },
+                            "created_by_fk": 1,
+                            "created_on": {
+                                "__datetime__": "2021-01-24T14:32:12"
+                            },
+                            "d3format": null,
+                            "description": null,
+                            "expression": "count(*)",
+                            "id": 1,
+                            "is_restricted": false,
+                            "metric_name": "count",
+                            "metric_type": null,
+                            "table_id": 1,
+                            "verbose_name": null,
+                            "warning_text": null
+                        }
+                    }
+                ],
+                "offset": 0,
+                "params": "{\"remote_id\": 1, \"database_name\": \"songs\"}",
+                "schema": "songs",
+                "sql": "SELECT \"songname\" AS \"songname\",\n       count(*) AS \"count\"\nFROM\n  (SELECT *\n   FROM songs.songs) AS \"expr_qry\"\nGROUP BY \"songname\"\nORDER BY \"count\" DESC\nLIMIT 1000",
+                "table_name": "admin admin-Query songs.admin admin-Untitled Query-1PlWMRjyi-cW17EJt4B",
+                "template_params": "{}"
+            }
+        },
+        {
+            "__SqlaTable__": {
+                "cache_timeout": null,
+                "columns": [
+                    {
+                        "__TableColumn__": {
+                            "changed_by_fk": 1,
+                            "changed_on": {
+                                "__datetime__": "2021-01-24T14:34:52"
+                            },
+                            "column_name": "songname",
+                            "created_by_fk": 1,
+                            "created_on": {
+                                "__datetime__": "2021-01-24T14:34:52"
+                            },
+                            "description": null,
+                            "expression": null,
+                            "filterable": true,
+                            "groupby": true,
+                            "id": 3,
+                            "is_active": true,
+                            "is_dttm": false,
+                            "python_date_format": null,
+                            "table_id": 2,
+                            "type": "VARCHAR",
+                            "verbose_name": null
+                        }
+                    },
+                    {
+                        "__TableColumn__": {
+                            "changed_by_fk": 1,
+                            "changed_on": {
+                                "__datetime__": "2021-01-24T14:34:52"
+                            },
+                            "column_name": "count",
+                            "created_by_fk": 1,
+                            "created_on": {
+                                "__datetime__": "2021-01-24T14:34:52"
+                            },
+                            "description": null,
+                            "expression": null,
+                            "filterable": true,
+                            "groupby": true,
+                            "id": 4,
+                            "is_active": true,
+                            "is_dttm": false,
+                            "python_date_format": null,
+                            "table_id": 2,
+                            "type": "BIGINT",
+                            "verbose_name": null
+                        }
+                    }
+                ],
+                "database_id": 3,
+                "default_endpoint": null,
+                "description": null,
+                "fetch_values_predicate": null,
+                "filter_select_enabled": false,
+                "main_dttm_col": null,
+                "metrics": [
+                    {
+                        "__SqlMetric__": {
+                            "changed_by_fk": 1,
+                            "changed_on": {
+                                "__datetime__": "2021-01-24T14:34:52"
+                            },
+                            "created_by_fk": 1,
+                            "created_on": {
+                                "__datetime__": "2021-01-24T14:34:52"
+                            },
+                            "d3format": null,
+                            "description": null,
+                            "expression": "count(*)",
+                            "id": 2,
+                            "is_restricted": false,
+                            "metric_name": "count",
+                            "metric_type": null,
+                            "table_id": 2,
+                            "verbose_name": null,
+                            "warning_text": null
+                        }
+                    }
+                ],
+                "offset": 0,
+                "params": "{\"remote_id\": 2, \"database_name\": \"songs\"}",
+                "schema": "songs",
+                "sql": "SELECT \"songname\" AS \"songname\",\n       count(*) AS \"count\"\nFROM\n  (SELECT *\n   FROM songs.songs) AS \"expr_qry\"\nGROUP BY \"songname\"\nORDER BY \"count\" DESC\nLIMIT 1000",
+                "table_name": "admin admin-Query songs.admin admin-Untitled Query-1PlWMRjyi-FJz0FwnYC",
+                "template_params": "{}"
+            }
+        }
+    ]
+}

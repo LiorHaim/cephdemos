@@ -14,8 +14,8 @@ spec:
   memory:
     nodeMemoryHeadroom: 2Gi
   coordinator:
-    cpuLimit: '2'
-    cpuRequest: '2'
+    cpuLimit: '1'
+    cpuRequest: '1'
     memoryAllocation: '4Gi'
   worker:
     count: 1
@@ -26,7 +26,7 @@ spec:
   hive:
     additionalProperties: |
       connector.name=hive-hadoop2
-      hive.s3.endpoint=http://minio:9000
+      hive.s3.endpoint=http://192.168.1.56:8080
       hive.s3.signer-type=S3SignerType
       hive.s3.path-style-access=true
       hive.s3.staging-directory=/tmp
@@ -42,7 +42,7 @@ spec:
         jdbcUrl: 'jdbc:postgresql://postgres.amq.svc.cluster.local/postgresdb'
         password: redhat
         username: redhat
-      s3Endpoint: 'http://minio:9000'
+      s3Endpoint: 'http://192.168.1.56:8080'
   additionalCatalogs:
           # postgresql: >
           #   connector.name=postgresql
