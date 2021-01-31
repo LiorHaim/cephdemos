@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: superset-db-init
-  namespace: amq
+  namespace: data-engineering-demo
 spec:
   parallelism: 1
   completions: 1

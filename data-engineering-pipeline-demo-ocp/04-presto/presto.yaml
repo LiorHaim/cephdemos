@@ -2,7 +2,7 @@ apiVersion: starburstdata.com/v1
 kind: Presto
 metadata:
   name: presto-cluster
-  namespace: amq
+  namespace: data-engineering-demo
 spec:
   nameOverride: presto-cluster
   image:
@@ -21,12 +21,12 @@ spec:
     count: 1
     cpuLimit: '1'
     cpuRequest: '1'
-    memoryAllocation: '2Gi'
+    memoryAllocation: '4Gi'
     prestoWorkerShutdownGracePeriodSeconds: 1
   hive:
     additionalProperties: |
       connector.name=hive-hadoop2
-      hive.s3.endpoint=http://192.168.1.56:8080
+      hive.s3.endpoint=http://192.168.1.59:8080
       hive.s3.signer-type=S3SignerType
       hive.s3.path-style-access=true
       hive.s3.staging-directory=/tmp
@@ -39,10 +39,10 @@ spec:
         imagepullPolicy: IfNotPresent
       memory: 0.5G
       postgreSql:
-        jdbcUrl: 'jdbc:postgresql://postgres.amq.svc.cluster.local/postgresdb'
+        jdbcUrl: 'jdbc:postgresql://postgres.data-engineering-demo.svc.cluster.local/postgresdb'
         password: redhat
         username: redhat
-      s3Endpoint: 'http://192.168.1.56:8080'
+      s3Endpoint: 'http://192.168.1.59:8080'
   additionalCatalogs:
           # postgresql: >
           #   connector.name=postgresql

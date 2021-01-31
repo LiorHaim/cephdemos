@@ -2,7 +2,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: superset
-  namespace: amq
+  namespace: data-engineering-demo
   labels:
     app: superset
     opendatahub.io/component: "true"
