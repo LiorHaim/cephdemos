@@ -16,7 +16,7 @@ spec:
   coordinator:
     cpuLimit: '1'
     cpuRequest: '1'
-    memoryAllocation: '4Gi'
+    memoryAllocation: '2Gi'
   worker:
     count: 1
     cpuLimit: '1'
