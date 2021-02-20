@@ -50,7 +50,11 @@ Now that we have all the prerequisites ready, let's start by creating our needed
 the needed S3 user in order to interact with the cluster, so as the S3 bucket so that Kafka could export our events to the data lake. 
 Let's create those resources: 
 
+```bash
 $ cd 01-ocs-external-ceph && ./run.sh && cd ..
+``` 
+
+The expected output: 
 
 ```bash 
 {
