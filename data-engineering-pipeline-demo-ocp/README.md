@@ -76,13 +76,13 @@ The expected output:
 }
 make_bucket: music-chart-songs-store-changelog
 ``` 
-The script will use `awscli` in order to export our credentials as environment variables, so that we'll be able to create the bucket properly. Make sure that you have access to your endpoint url with all the open ports so that this script will work properly. 
+The script uses `awscli` in order to export our credentials as environment variables, so that we'll be able to create the bucket properly. Make sure that you have access to your endpoint url with all the open ports so that this script will work properly. 
 
-#### Deploying Kafka for as new-ETL ####
+#### Deploying Kafka new-ETL ####
 
 Now that we have our S3 ready, we need to deploy all the needed Kafka resources. In this section we'll deploy a Kafka cluster, using the `AMQ Streams` operator, that is offered via the `Openshift Operator Hub`. 
 Additionally, we'll deploy Kafka Topics and Kafka Connect as well, in order to export all of the existing topic events to our S3 bucket. 
-Important! make sure you change the endpoint url to suite to yours, or else Kafka Connect will try to expose the events with no success. 
+Important! make sure that you change the endpoint url to suite to yours, or else Kafka Connect will try to expose the events with no success. 
 
 Run the script in order to create those resources: 
 
