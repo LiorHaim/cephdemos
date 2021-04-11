@@ -27,7 +27,7 @@ Let's get started!
 * Openshift Virtualization 2.6 
 * Openshift Container Storage 4.6
 
-### Infrastructure Preparation 
+## Infrastructure Preparation 
 
 In order to run Virtual Machines on our Openshift cluster, we need to install the `Openshift Virtualization` operator from the `Operator Hub`. Navigate to the `OperatorHub` tab --> `Openshift Virtualization` and click `Install`. 
 
@@ -38,7 +38,7 @@ Once we have the operator installed, we need to create the `HyperConverged` cust
 ######################################################333 Picture 
 
 
-### Understanding Openshift Virtualization Basics
+## Understanding Openshift Virtualization Basics
 
 In order to create our new VM, let's create a new project that is called `my-ocpvirt`: 
 
@@ -53,7 +53,7 @@ $ oc project
 Using project "my-ocpvirt" on server "https://api.ocp.spaz.local:6443".
 ```
 
-#### Creating A Boot Source 
+### Creating A Boot Source 
 
 Now that we have the project, let's start by creating a boot source. A boot source represents the way your VM will install its operating system, There are several ways to do so: 
 * Using an ISO file, and mapping that ISO directly to the VM when it boots, as you would do with any other server
@@ -90,7 +90,7 @@ cdi-upload-rhel8                             1/1     Running   0          87s
 Once this pod exists, you could be rest assured that your boot source is ready to use! 
 
 
-#### Creating A Virtual Machine From Template 
+### Creating A Virtual Machine From Template 
 
 Verify the you have the boot source avaiable by navigating to `Virtualization` --> `Templates`: 
 
@@ -100,7 +100,7 @@ Verify the you have the boot source avaiable by navigating to `Virtualization` -
 If you see the `Boot Source` in `Available` mode, you are good to go! 
 
 
-#### Creating our Virtual Machine 
+### Creating our Virtual Machine 
 
 Navigate to `Virtualization` --> `Create Virtual Machine` where you'll be redirected to select a template, choose one of the following and continue: 
 
@@ -129,7 +129,7 @@ Click on the VM's name and navigate to `Console`, switch to `Serial Console` and
 
 ################################# picture for choosing a template 
 
-#### Exposing Our VM To The Outside World 
+### Exposing Our VM To The Outside World 
 
 In order to expose our vm to external access, we'll use the `virtctl` command-line that can be found here. 
 Download and add it to your path, so you could start using it. It'll take your existing Kubernetes context and use it to find out all the related metadata. 
@@ -175,7 +175,7 @@ Last login: Sun Apr 11 09:59:22 2021
 Red Hat Enterprise Linux release 8.2 (Ootpa)
 ```
 
-#### Migrate Our VM To a Different Hypervisor 
+### Migrate Our VM To a Different Hypervisor 
 
 There cases where there are some node failures, or we should drain a node to be able to do some maintenance work. To allow contuinuity of our VM service, a live migration should be performed on all VMs located on that host to a different one in the Openshift cluster. 
 
