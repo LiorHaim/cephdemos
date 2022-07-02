@@ -1,0 +1,13 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: webapp-exporter
+  labels:
+    app: webapp
+spec:
+  to:
+    kind: Service
+    name: webapp-exporter
+  port:
+    targetPort: metrics
+

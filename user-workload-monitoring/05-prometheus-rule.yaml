@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: webapp-alerting
+spec:
+  groups:
+  - name: webapp-alerting
+    rules:
+    - alert: AppNotHealthy
+      annotations:
+        description: Your system is in an unhealthy state.
+        summary: >-
+          This alert notifies that your system is currently in a unhealthy state. 
+          Please make sure to reach out to your system administrator for further details.
+      expr: app_health{job="webapp-exporter"} == 1
