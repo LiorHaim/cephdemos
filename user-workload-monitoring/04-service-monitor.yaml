@@ -14,7 +14,7 @@ spec:
       path: /
   namespaceSelector:
     matchNames:
-      - rafael-monitoring
+      - REPLACE_WITH_NAMESPACE
   selector:
     matchLabels:
       app: webapp
